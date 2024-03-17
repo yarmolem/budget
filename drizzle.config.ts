@@ -3,12 +3,11 @@ import { type Config } from "drizzle-kit";
 import { env } from "@/env";
 
 export default {
-  driver: "turso",
   out: "./drizzle",
+  driver: "better-sqlite",
   schema: "./src/server/db/schema.ts",
   dbCredentials: {
     url: env.DATABASE_URL,
-    authToken: env.DATABASE_AUTH_TOKEN,
   },
-  tablesFilter: ["budget_*"],
+  tablesFilter: ["check_*"],
 } satisfies Config;

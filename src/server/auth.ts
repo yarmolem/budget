@@ -1,16 +1,14 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { type GetServerSidePropsContext } from "next";
+import argon2 from "argon2";
+import { eq } from "drizzle-orm";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import { type Adapter } from "next-auth/adapters";
-import CredentialsProvider from "next-auth/providers/credentials";
 
 import { db } from "@/server/db";
-import { createTable } from "@/server/db/schema";
-import { env } from "@/env";
+import { users } from "@/server/db/schema";
+import Credentials from "next-auth/providers/credentials";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -40,30 +38,74 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    jwt: ({ token, user }) => {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+    session: async ({ session, token }) => {
+      if (!token?.id) {
+        return session;
+      }
+
+      const user = await db.query.users.findFirst({
+        where: eq(users.id, token.id as string),
+      });
+
+      if (!user) {
+        return session;
+      }
+
+      return {
+        ...session,
+        user: {
+          ...user,
+          id: user.id,
+        },
+      };
+    },
   },
+
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
-  adapter: DrizzleAdapter(db, createTable) as Adapter,
   providers: [
-    CredentialsProvider({
+    Credentials({
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(_credentials, _req) {
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
-        return user;
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials");
+        }
+
+        // Add logic here to look up the user from the credentials.
+        const user = await db.query.users.findFirst({
+          where: eq(users.email, credentials.email),
+        });
+
+        if (!user) {
+          throw new Error("Invalid credentials");
+        }
+
+        const isCorrectPassword = await argon2.verify(
+          user.password,
+          credentials.password,
+        );
+
+        if (!isCorrectPassword) {
+          throw new Error("Invalid credentials");
+        }
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        };
       },
     }),
   ],
@@ -74,9 +116,4 @@ export const authOptions: NextAuthOptions = {
  *
  * @see https://next-auth.js.org/configuration/nextjs
  */
-export const getServerAuthSession = (ctx: {
-  req: GetServerSidePropsContext["req"];
-  res: GetServerSidePropsContext["res"];
-}) => {
-  return getServerSession(ctx.req, ctx.res, authOptions);
-};
+export const getServerAuthSession = () => getServerSession(authOptions);
