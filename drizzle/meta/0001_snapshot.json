@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "4bb17934-0cc4-4507-b0b5-b90154faac1b",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "1377081a-bd97-4785-8e23-604ea6cfedff",
+  "prevId": "4bb17934-0cc4-4507-b0b5-b90154faac1b",
   "tables": {
     "budget_category": {
       "name": "budget_category",
@@ -14,15 +14,15 @@
           "notNull": true,
           "autoincrement": false
         },
-        "name": {
-          "name": "name",
+        "title": {
+          "name": "title",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "email": {
-          "name": "email",
+        "color": {
+          "name": "color",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -115,6 +115,9 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"budget_category\".\"name\"": "\"budget_category\".\"title\"",
+      "\"budget_category\".\"email\"": "\"budget_category\".\"color\""
+    }
   }
 }

@@ -15,21 +15,14 @@ import {
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { api } from "@/trpc/react";
-import CategoryModal from "./category-modal";
+import ExpensesModal from "./expenses-modal";
 import { BasicModal } from "@/components/ui/basic-modal";
 import useToggle from "@/hooks/use-toggle";
 import toast from "react-hot-toast";
 import { useDebounceCallback } from "usehooks-ts";
 import { usePagination } from "@/hooks/use-pagination";
-
-export type Category = {
-  id: string;
-  createdAt: Date;
-  updatedAt: Date;
-  title: string;
-  color: string;
-  authorId: string;
-};
+import type { ICategory, IExpense } from "@/server/db/schema";
+import { currencyUtils } from "@/lib/utils";
 
 const CategoriesPage = () => {
   const toggleModal = useToggle();
@@ -40,9 +33,9 @@ const CategoriesPage = () => {
   const pagination = usePagination();
 
   const debounced = useDebounceCallback(setText, 500);
-  const deleteMutation = api.categories.delete.useMutation();
+  const deleteMutation = api.expenses.delete.useMutation();
 
-  const { data, isLoading, refetch } = api.categories.getAll.useQuery({
+  const { data, isLoading, refetch } = api.expenses.getAll.useQuery({
     pagination,
     search: text,
   });
@@ -55,37 +48,41 @@ const CategoriesPage = () => {
           void refetch();
           setSelectedId(null);
           toggleAlert.onClose();
-          toast.success("Category deleted successfully");
+          toast.success("Expense deleted successfully");
         },
         onError: (error) => {
-          console.log("[ERROR_DELETE_CATEGORY]", error);
+          console.log("[ERROR_DELETE_EXPENSE]", error);
           toast.error("Something went wrong");
         },
       },
     );
   };
 
-  const columns: ColumnDef<Category>[] = useMemo(() => {
+  const columns: ColumnDef<IExpense>[] = useMemo(() => {
     return [
       {
-        header: "Title",
-        accessorKey: "title",
+        header: "Description",
+        accessorKey: "description",
       },
       {
-        accessorKey: "color",
-        header: () => <p className="text-center">Color</p>,
-        cell: ({ cell }) => {
-          return (
-            <div
-              className="mx-auto h-6 w-6 rounded-full"
-              style={{ backgroundColor: cell.getValue() as string }}
-            />
-          );
-        },
+        accessorKey: "category",
+        header: () => <p className="text-center">Category</p>,
+        cell: ({ cell }) => (
+          <p className="text-center">{(cell.getValue() as ICategory).title}</p>
+        ),
       },
       {
-        accessorKey: "createdAt",
-        header: () => <p className="text-center">Created</p>,
+        accessorKey: "amount",
+        header: () => <p className="text-center">Amount</p>,
+        cell: ({ cell }) => (
+          <p className="text-center">
+            {currencyUtils.format(cell.getValue() as number)}
+          </p>
+        ),
+      },
+      {
+        accessorKey: "date",
+        header: () => <p className="text-center">Date</p>,
         cell: ({ cell }) => (
           <p className="text-center">
             {dayjs(cell.getValue() as string).format("DD/MM/YYYY")}
@@ -133,9 +130,9 @@ const CategoriesPage = () => {
 
   return (
     <>
-      <PageDataTable<Category>
-        title="Categories"
-        description="Manage your categories"
+      <PageDataTable<IExpense>
+        title="Expenses"
+        description="Manage your expenses"
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}
@@ -148,7 +145,7 @@ const CategoriesPage = () => {
         pageCount={data?.meta.pageCount ?? 0}
       />
 
-      <CategoryModal
+      <ExpensesModal
         data={selectedItem}
         isOpen={toggleModal.isOpen}
         onClose={() => {
@@ -165,8 +162,8 @@ const CategoriesPage = () => {
 
       <BasicModal
         footer
-        title="Delete Category"
-        description="Are you sure you want to delete this category?"
+        title="Delete expense"
+        description="Are you sure you want to delete this expense?"
         isOpen={toggleAlert.isOpen}
         onClose={toggleAlert.onClose}
         isLoading={deleteMutation.isPending}

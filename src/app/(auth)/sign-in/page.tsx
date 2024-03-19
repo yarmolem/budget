@@ -27,6 +27,7 @@ import {
 import { InputSecure } from "@/components/ui/input-secure";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email(),
@@ -37,6 +38,7 @@ type FormValues = z.infer<typeof formSchema>;
 
 const SignInPage = () => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -46,6 +48,8 @@ const SignInPage = () => {
   });
 
   async function onSubmit(values: FormValues) {
+    setLoading(true);
+
     try {
       const res = await signIn("credentials", {
         email: values.email,
@@ -58,8 +62,10 @@ const SignInPage = () => {
         return;
       }
 
+      setLoading(false);
       router.replace("/");
     } catch (error) {
+      setLoading(false);
       console.log("[ERROR_LOGIN], ", error);
     }
   }
@@ -111,7 +117,7 @@ const SignInPage = () => {
               />
             </div>
 
-            <Button type="submit" className="mt-6 w-full">
+            <Button isLoading={loading} type="submit" className="mt-6 w-full">
               Sign in
             </Button>
 
