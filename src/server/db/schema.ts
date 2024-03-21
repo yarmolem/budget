@@ -10,6 +10,21 @@ import { int, text, sqliteTableCreator } from "drizzle-orm/sqlite-core";
 export const createTable = sqliteTableCreator((name) => `budget_${name}`);
 
 export type PayMethod = "YAPE" | "CASH" | "TRANSFER" | "DEBIT_CARD" | "OTHER";
+export type IncomeMethod = "YAPE" | "CASH" | "DEPOSIT" | "OTHER";
+
+export enum EnumTransaccionType {
+  INCOME = "INCOME",
+  EXPENSE = "EXPENSE",
+}
+
+export enum EnumTransaccionMethod {
+  YAPE = "YAPE",
+  CASH = "CASH",
+  DEPOSIT = "DEPOSIT",
+  DEBIT_CARD = "DEBIT_CARD",
+  TRANSFER = "TRANSFER",
+  OTHER = "OTHER",
+}
 
 export const users = createTable("user", {
   id: text("id").notNull().primaryKey(),
@@ -29,6 +44,7 @@ export const categories = createTable("category", {
   title: text("title").notNull(),
   color: text("color").notNull(),
   authorId: text("author_id").notNull(),
+  isIncome: int("is_income", { mode: "boolean" }).default(false).notNull(),
   createdAt: int("created_at", { mode: "timestamp" })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -37,13 +53,14 @@ export const categories = createTable("category", {
     .notNull(),
 });
 
-export const expenses = createTable("expense", {
+export const transactions = createTable("transaction", {
   id: text("id").notNull().primaryKey(),
   amount: int("amount").notNull(),
   description: text("description").notNull(),
   authorId: text("author_id").notNull(),
   categoryId: text("category_id").notNull(),
-  payMethod: text("pay_method").notNull().$type<PayMethod>(),
+  type: text("type").notNull().$type<EnumTransaccionType>(),
+  method: text("method").notNull().$type<EnumTransaccionMethod>(),
   date: int("date", { mode: "timestamp" }).notNull(),
   createdAt: int("created_at", { mode: "timestamp" })
     .default(sql`CURRENT_TIMESTAMP`)
@@ -54,23 +71,23 @@ export const expenses = createTable("expense", {
 });
 
 export const usersRelations = relations(users, ({ many }) => ({
-  expenses: many(expenses),
   categories: many(categories),
+  transactions: many(transactions),
 }));
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
-  expenses: many(expenses),
+  transactions: many(transactions),
   user: one(users, { fields: [categories.authorId], references: [users.id] }),
 }));
 
-export const expensesRelations = relations(expenses, ({ one }) => ({
-  user: one(users, { fields: [expenses.authorId], references: [users.id] }),
+export const transactionsRelations = relations(transactions, ({ one }) => ({
+  user: one(users, { fields: [transactions.authorId], references: [users.id] }),
   category: one(categories, {
-    fields: [expenses.categoryId],
     references: [categories.id],
+    fields: [transactions.categoryId],
   }),
 }));
 
 export type IUser = InferSelectModel<typeof users>;
-export type IExpense = InferSelectModel<typeof expenses>;
 export type ICategory = InferSelectModel<typeof categories>;
+export type ITransaction = InferSelectModel<typeof transactions>;

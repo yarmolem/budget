@@ -2,9 +2,11 @@
 
 import React from "react";
 import { ThemeProvider } from "next-themes";
-
+import NextTopLoader from "nextjs-toploader";
 import { SessionProvider, type SessionProviderProps } from "next-auth/react";
+
 import { TRPCReactProvider } from "@/trpc/react";
+
 export default function Providers({
   session,
   children,
@@ -14,6 +16,7 @@ export default function Providers({
 }) {
   return (
     <>
+      <NextTopLoader showSpinner={false} />
       <TRPCReactProvider>
         <ThemeProvider
           attribute="class"

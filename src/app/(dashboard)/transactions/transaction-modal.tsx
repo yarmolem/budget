@@ -1,17 +1,24 @@
 "use client";
 
 import { z } from "zod";
+import dayjs from "dayjs";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
 
-import { api } from "@/trpc/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogFooter } from "@/components/ui/dialog";
 import { BasicModal } from "@/components/ui/basic-modal";
+import { BasicSelect } from "@/components/ui/basic-select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Form,
   FormItem,
@@ -20,28 +27,35 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { type IExpense } from "@/server/db/schema";
-import { BasicSelect } from "@/components/ui/basic-select";
+import {
+  EnumTransaccionType,
+  EnumTransaccionMethod,
+  type ITransaction,
+} from "@/server/db/schema";
+
+import { cn } from "@/lib/utils";
+import { api } from "@/trpc/react";
 
 type Props = {
   isOpen: boolean;
-  data: IExpense | null;
+  data: ITransaction | null;
   onClose: () => void;
   onCreate?: () => void;
   onUpdate?: () => void;
 };
 
 const formSchema = z.object({
+  date: z.date(),
   amount: z.string().min(1),
   categoryId: z.string().min(1),
   description: z.string().min(1),
-  date: z.string().min(1),
-  payMethod: z.string().min(1),
+  type: z.nativeEnum(EnumTransaccionType),
+  method: z.nativeEnum(EnumTransaccionMethod),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-const ExpensesModal = (props: Props) => {
+const TransactionsModal = (props: Props) => {
   const isEdit = props.data !== null;
 
   const form = useForm<FormValues>({
@@ -50,13 +64,14 @@ const ExpensesModal = (props: Props) => {
       amount: "",
       categoryId: "",
       description: "",
-      date: new Date().toISOString(),
-      payMethod: "",
+      date: dayjs().toDate(),
+      type: EnumTransaccionType.EXPENSE,
+      method: EnumTransaccionMethod.YAPE,
     },
   });
 
-  const createMutation = api.expenses.create.useMutation();
-  const updateMutation = api.expenses.update.useMutation();
+  const createMutation = api.transactions.create.useMutation();
+  const updateMutation = api.transactions.update.useMutation();
   const categoriesQuery = api.categories.getAll.useQuery({
     pagination: {
       page: 1,
@@ -67,26 +82,27 @@ const ExpensesModal = (props: Props) => {
   const create = (values: FormValues) => {
     createMutation.mutate(
       {
+        type: values.type,
+        method: values.method,
         amount: Number(values.amount),
         categoryId: values.categoryId,
         description: values.description,
-        date: values.date,
-        payMethod: values.payMethod,
+        date: values.date.toISOString(),
       },
       {
         onSuccess: (data) => {
           if (!data?.id) {
-            toast.error("Error creating expense");
+            toast.error("Error creating transaction");
             return;
           }
 
-          toast.success("Expense created successfully");
+          toast.success("Transaction created successfully");
           props.onCreate?.();
           props.onClose();
           form.reset();
         },
         onError: (error) => {
-          console.log("[ERROR_CREATE_EXPENSE]: ", error);
+          console.log("[ERROR_CREATE_TRANSACTION]: ", error);
           toast.error("Something went wrong");
         },
       },
@@ -101,26 +117,27 @@ const ExpensesModal = (props: Props) => {
     updateMutation.mutate(
       {
         id: props.data.id,
+        type: values.type,
+        method: values.method,
         amount: Number(values.amount),
         categoryId: values.categoryId,
+        date: values.date.toISOString(),
         description: values.description,
-        date: values.date,
-        payMethod: values.payMethod,
       },
       {
         onSuccess: (data) => {
           if (!data?.id) {
-            toast.error("Error updating expense");
+            toast.error("Error updating transaction");
             return;
           }
 
-          toast.success("Expense updated successfully");
+          toast.success("Transaction updated successfully");
           props.onUpdate?.();
           props.onClose();
           form.reset();
         },
         onError: (error) => {
-          console.log("[ERROR_UPDATE_EXPENCE]: ", error);
+          console.log("[ERROR_UPDATE_TRANSACTION]: ", error);
           toast.error("Something went wrong");
         },
       },
@@ -142,11 +159,15 @@ const ExpensesModal = (props: Props) => {
 
   useEffect(() => {
     if (props?.data) {
+      form.setValue("type", props.data.type);
+      form.setValue("method", props.data.method);
       form.setValue("amount", String(props.data.amount));
       form.setValue("categoryId", props.data.categoryId);
       form.setValue("description", props.data.description);
-      form.setValue("date", props.data.date.toISOString());
-      form.setValue("payMethod", props.data.payMethod);
+      form.setValue(
+        "date",
+        props.data.date ? new Date(props.data.date) : new Date(),
+      );
     } else {
       form.reset();
     }
@@ -158,8 +179,8 @@ const ExpensesModal = (props: Props) => {
       isLoading={isLoading}
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title={isEdit ? "Edit expense" : "Created expense"}
-      description={isEdit ? "Edit expense" : "Create new expense"}
+      title={isEdit ? "Edit transaction" : "Created transaction"}
+      description={isEdit ? "Edit transaction" : "Create new transaction"}
     >
       <Form {...form}>
         <form
@@ -192,15 +213,44 @@ const ExpensesModal = (props: Props) => {
               </FormItem>
             )}
           />
+
           <FormField
             name="date"
             control={form.control}
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="flex flex-col">
                 <FormLabel>Date</FormLabel>
-                <FormControl>
-                  <Input type="date" placeholder="Enter date" {...field} />
-                </FormControl>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground",
+                        )}
+                      >
+                        {field.value ? (
+                          dayjs(field.value).format("DD/MM/YYYY")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}
@@ -226,18 +276,39 @@ const ExpensesModal = (props: Props) => {
             )}
           />
           <FormField
-            name="payMethod"
+            name="method"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Pay method</FormLabel>
+                <FormLabel>Method</FormLabel>
                 <FormControl>
                   <BasicSelect {...field}>
-                    <option value="">Select pay method</option>
-                    <option value="YAPE">Yape</option>
-                    <option value="CASH">Cash</option>
-                    <option value="TRANSFER">Transfer</option>
-                    <option value="DEBIT_CARD">Debit card</option>
+                    <option value="">Select method</option>
+                    {Object.values(EnumTransaccionMethod).map((method) => (
+                      <option key={method} value={method}>
+                        {method}
+                      </option>
+                    ))}
+                  </BasicSelect>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="type"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Transaction type</FormLabel>
+                <FormControl>
+                  <BasicSelect {...field}>
+                    <option value="">Select type</option>
+                    {Object.values(EnumTransaccionType).map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
                   </BasicSelect>
                 </FormControl>
                 <FormMessage />
@@ -260,4 +331,4 @@ const ExpensesModal = (props: Props) => {
   );
 };
 
-export default ExpensesModal;
+export default TransactionsModal;

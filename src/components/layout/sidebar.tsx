@@ -11,7 +11,6 @@ import { signOut } from "next-auth/react";
 export interface NavItem {
   title: string;
   href?: string;
-  label?: string;
   disabled?: boolean;
   external?: boolean;
   description?: string;
@@ -22,19 +21,16 @@ const items: NavItem[] = [
     href: "/",
     icon: PieChart,
     title: "Dashboard",
-    label: "Dashboard",
   },
   {
-    href: "/categories",
     icon: List,
+    href: "/categories",
     title: "Categories",
-    label: "Categories",
   },
   {
-    href: "/expenses",
     icon: Euro,
-    title: "Expenses",
-    label: "Expenses",
+    href: "/transactions",
+    title: "Transactions",
   },
 ];
 

@@ -22,6 +22,7 @@ export const categoriesRouter = createTRPCRouter({
             .object({
               title: z.string().optional(),
               color: z.string().optional(),
+              isIncome: z.boolean().optional(),
             })
             .optional(),
         })
@@ -38,6 +39,9 @@ export const categoriesRouter = createTRPCRouter({
           : undefined,
         input?.filters?.color
           ? eq(categories.color, input.filters.color)
+          : undefined,
+        input?.filters?.isIncome
+          ? eq(categories.isIncome, input.filters.isIncome)
           : undefined,
       );
 
@@ -69,6 +73,7 @@ export const categoriesRouter = createTRPCRouter({
       z.object({
         title: z.string(),
         color: z.string(),
+        isIncome: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -90,6 +95,7 @@ export const categoriesRouter = createTRPCRouter({
           id,
           title: input.title,
           color: input.color,
+          isIncome: input.isIncome,
           authorId: ctx.session.user.id,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -104,6 +110,7 @@ export const categoriesRouter = createTRPCRouter({
         id: z.string(),
         title: z.string(),
         color: z.string(),
+        isIncome: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -123,6 +130,7 @@ export const categoriesRouter = createTRPCRouter({
         .set({
           title: input.title,
           color: input.color,
+          isIncome: input.isIncome,
           updatedAt: new Date(),
         })
         .where(

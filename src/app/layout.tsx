@@ -1,12 +1,12 @@
 import "@/styles/globals.css";
 
-import { Inter } from "next/font/google";
+import { Nunito_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 
 import Providers from "@/components/providers";
 import { getServerAuthSession } from "@/server/auth";
 
-const inter = Inter({
+const inter = Nunito_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
 });
@@ -25,7 +25,7 @@ export default async function RootLayout({
   const session = await getServerAuthSession();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
         <Providers session={session}>{children}</Providers>
         <Toaster />

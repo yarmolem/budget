@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { type ICategory } from "@/server/db/schema";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type Props = {
   isOpen: boolean;
@@ -33,6 +34,7 @@ type Props = {
 const formSchema = z.object({
   title: z.string().min(1),
   color: z.string().min(1),
+  isIncome: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -45,6 +47,7 @@ const CategoryModal = (props: Props) => {
     defaultValues: {
       title: "",
       color: "",
+      isIncome: true,
     },
   });
 
@@ -56,6 +59,7 @@ const CategoryModal = (props: Props) => {
       {
         title: values.title,
         color: values.color,
+        isIncome: values.isIncome,
       },
       {
         onSuccess: (data) => {
@@ -87,6 +91,7 @@ const CategoryModal = (props: Props) => {
         id: props.data.id,
         title: values.title,
         color: values.color,
+        isIncome: values.isIncome,
       },
       {
         onSuccess: (data) => {
@@ -164,6 +169,24 @@ const CategoryModal = (props: Props) => {
                 <FormControl>
                   <Input type="color" placeholder="Enter color" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            name="isIncome"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem className="flex items-center gap-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onBlur={field.onBlur}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormLabel>is income ?</FormLabel>
                 <FormMessage />
               </FormItem>
             )}

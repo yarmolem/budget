@@ -1,10 +1,14 @@
 "use client";
 
 import dayjs from "dayjs";
+import toast from "react-hot-toast";
 import { MoreHorizontal } from "lucide-react";
 import React, { useMemo, useState } from "react";
+import { useDebounceCallback } from "usehooks-ts";
 
+import TransactionsModal from "./transaction-modal";
 import { Button } from "@/components/ui/button";
+import { BasicModal } from "@/components/ui/basic-modal";
 import PageDataTable from "@/components/shared/page-data-table";
 import {
   DropdownMenu,
@@ -13,29 +17,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import type { ColumnDef } from "@tanstack/react-table";
 import { api } from "@/trpc/react";
-import ExpensesModal from "./expenses-modal";
-import { BasicModal } from "@/components/ui/basic-modal";
 import useToggle from "@/hooks/use-toggle";
-import toast from "react-hot-toast";
-import { useDebounceCallback } from "usehooks-ts";
-import { usePagination } from "@/hooks/use-pagination";
-import type { ICategory, IExpense } from "@/server/db/schema";
 import { currencyUtils } from "@/lib/utils";
+import { usePagination } from "@/hooks/use-pagination";
 
-const CategoriesPage = () => {
+import type { ColumnDef } from "@tanstack/react-table";
+import {
+  EnumTransaccionType,
+  type ICategory,
+  type ITransaction,
+} from "@/server/db/schema";
+import { Badge } from "@/components/ui/badge";
+
+const TransactionsPage = () => {
   const toggleModal = useToggle();
   const toggleAlert = useToggle();
+  const pagination = usePagination();
   const [text, setText] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  const pagination = usePagination();
-
   const debounced = useDebounceCallback(setText, 500);
-  const deleteMutation = api.expenses.delete.useMutation();
+  const deleteMutation = api.transactions.delete.useMutation();
 
-  const { data, isLoading, refetch } = api.expenses.getAll.useQuery({
+  const { data, isLoading, refetch } = api.transactions.getAll.useQuery({
     pagination,
     search: text,
   });
@@ -48,17 +53,17 @@ const CategoriesPage = () => {
           void refetch();
           setSelectedId(null);
           toggleAlert.onClose();
-          toast.success("Expense deleted successfully");
+          toast.success("Transaction deleted successfully");
         },
         onError: (error) => {
-          console.log("[ERROR_DELETE_EXPENSE]", error);
+          console.log("[ERROR_DELETE_TRANSACTION]", error);
           toast.error("Something went wrong");
         },
       },
     );
   };
 
-  const columns: ColumnDef<IExpense>[] = useMemo(() => {
+  const columns: ColumnDef<ITransaction>[] = useMemo(() => {
     return [
       {
         header: "Description",
@@ -74,10 +79,18 @@ const CategoriesPage = () => {
       {
         accessorKey: "amount",
         header: () => <p className="text-center">Amount</p>,
-        cell: ({ cell }) => (
-          <p className="text-center">
-            {currencyUtils.format(cell.getValue() as number)}
-          </p>
+        cell: ({ cell, row }) => (
+          <div className="text-center">
+            {row.original.type === EnumTransaccionType.INCOME ? (
+              <Badge variant="success">
+                + {currencyUtils.format(cell.getValue() as number)}
+              </Badge>
+            ) : (
+              <Badge variant="destructive">
+                - {currencyUtils.format(cell.getValue() as number)}
+              </Badge>
+            )}
+          </div>
         ),
       },
       {
@@ -130,9 +143,9 @@ const CategoriesPage = () => {
 
   return (
     <>
-      <PageDataTable<IExpense>
-        title="Expenses"
-        description="Manage your expenses"
+      <PageDataTable<ITransaction>
+        title="Incomes"
+        description="Manage your incomes"
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}
@@ -145,7 +158,7 @@ const CategoriesPage = () => {
         pageCount={data?.meta.pageCount ?? 0}
       />
 
-      <ExpensesModal
+      <TransactionsModal
         data={selectedItem}
         isOpen={toggleModal.isOpen}
         onClose={() => {
@@ -162,8 +175,8 @@ const CategoriesPage = () => {
 
       <BasicModal
         footer
-        title="Delete expense"
-        description="Are you sure you want to delete this expense?"
+        title="Delete transaction"
+        description="Are you sure you want to delete this transaction?"
         isOpen={toggleAlert.isOpen}
         onClose={toggleAlert.onClose}
         isLoading={deleteMutation.isPending}
@@ -180,4 +193,4 @@ const CategoriesPage = () => {
   );
 };
 
-export default CategoriesPage;
+export default TransactionsPage;

@@ -58,15 +58,21 @@ const SignInPage = () => {
       });
 
       if (!res?.ok && res?.error) {
-        toast.error(res.error);
+        throw new Error(res.error);
+      }
+
+      router.replace("/");
+    } catch (error) {
+      console.log("[ERROR_LOGIN], ", error);
+
+      if (error instanceof Error) {
+        toast.error(error.message);
         return;
       }
 
+      toast.error("Something went wrong");
+    } finally {
       setLoading(false);
-      router.replace("/");
-    } catch (error) {
-      setLoading(false);
-      console.log("[ERROR_LOGIN], ", error);
     }
   }
 

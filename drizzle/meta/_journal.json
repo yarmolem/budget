@@ -29,6 +29,34 @@
       "when": 1710827727329,
       "tag": "0003_flippant_robbie_robertson",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1710851889092,
+      "tag": "0004_sour_mad_thinker",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1710972194671,
+      "tag": "0005_loose_omega_sentinel",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1710973991921,
+      "tag": "0006_lethal_proudstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1710981875617,
+      "tag": "0007_nebulous_silhouette",
+      "breakpoints": true
     }
   ]
 }

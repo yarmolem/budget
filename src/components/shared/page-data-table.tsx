@@ -41,7 +41,7 @@ const activeButtonProps = buttonVariants({ size: "icon", variant: "outline" });
 const PageDataTable = <T extends object>(props: Props<T>) => {
   return (
     <>
-      <Card className="flex h-full w-full flex-1 flex-col">
+      <div className="flex h-full w-full flex-1 flex-col">
         <CardHeader className="space-y-2">
           <CardTitle>{props.title}</CardTitle>
           <CardDescription>{props.description}</CardDescription>
@@ -89,7 +89,7 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
             breakLabel={<MoreHorizontal className="h-4 w-4" />}
           />
         </CardFooter>
-      </Card>
+      </div>
     </>
   );
 };
