@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { PieChart, type LucideProps, List, Euro } from "lucide-react";
+import { PieChart, type LucideProps, List, Euro, Tag } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { signOut } from "next-auth/react";
@@ -31,6 +31,11 @@ const items: NavItem[] = [
     icon: Euro,
     href: "/transactions",
     title: "Transactions",
+  },
+  {
+    icon: Tag,
+    href: "/tags",
+    title: "Tags",
   },
 ];
 
