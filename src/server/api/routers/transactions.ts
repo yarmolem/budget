@@ -7,6 +7,7 @@ import {
   transactions,
   EnumTransaccionType,
   EnumTransaccionMethod,
+  tagsOnTransactions,
 } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
@@ -41,6 +42,7 @@ export const transactionsRouter = createTRPCRouter({
           ((input?.pagination?.page ?? 1) - 1) *
           (input?.pagination?.pageSize ?? 10),
         with: {
+          tags: true,
           category: true,
         },
       });
@@ -66,6 +68,7 @@ export const transactionsRouter = createTRPCRouter({
         amount: z.number(),
         categoryId: z.string(),
         description: z.string(),
+        tagIds: z.array(z.string()).optional(),
         type: z.nativeEnum(EnumTransaccionType),
         method: z.nativeEnum(EnumTransaccionMethod),
       }),
@@ -88,6 +91,15 @@ export const transactionsRouter = createTRPCRouter({
         })
         .returning();
 
+      if (Array.isArray(input?.tagIds)) {
+        await ctx.db.insert(tagsOnTransactions).values(
+          input.tagIds.map((tagId) => ({
+            tagId,
+            transactionId: id,
+          })),
+        );
+      }
+
       return data?.[0] ?? null;
     }),
   update: protectedProcedure
@@ -98,6 +110,7 @@ export const transactionsRouter = createTRPCRouter({
         amount: z.number(),
         categoryId: z.string(),
         description: z.string(),
+        tagIds: z.array(z.string()).optional(),
         type: z.nativeEnum(EnumTransaccionType),
         method: z.nativeEnum(EnumTransaccionMethod),
       }),
@@ -121,6 +134,19 @@ export const transactionsRouter = createTRPCRouter({
           ),
         )
         .returning();
+
+      if (Array.isArray(input?.tagIds)) {
+        await ctx.db
+          .delete(tagsOnTransactions)
+          .where(eq(tagsOnTransactions.transactionId, input.id));
+
+        await ctx.db.insert(tagsOnTransactions).values(
+          input.tagIds.map((tagId) => ({
+            tagId,
+            transactionId: input.id,
+          })),
+        );
+      }
 
       return data?.[0] ?? null;
     }),
