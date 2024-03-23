@@ -70,6 +70,17 @@ const TransactionsPage = () => {
         accessorKey: "description",
       },
       {
+        accessorKey: "tags",
+        header: () => <p className="text-left">Tags</p>,
+        cell: ({ row }) => (
+          <div className="text-cente flex max-w-sm flex-wrap gap-1">
+            {row?.original?.tags?.map((tag) => (
+              <Badge key={tag.tag.id}>{tag.tag.title}</Badge>
+            ))}
+          </div>
+        ),
+      },
+      {
         accessorKey: "category",
         header: () => <p className="text-center">Category</p>,
         cell: ({ cell }) => (
@@ -144,8 +155,8 @@ const TransactionsPage = () => {
   return (
     <>
       <PageDataTable<ITransaction>
-        title="Incomes"
-        description="Manage your incomes"
+        title="Transactions"
+        description="Manage your transactions here."
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}

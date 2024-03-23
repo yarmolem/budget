@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import dayjs from "dayjs";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useForm } from "react-hook-form";
@@ -35,6 +35,18 @@ import {
 
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
+import {
+  transactionMethodOptions,
+  transactionTypeOptions,
+} from "@/data/transactions";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { SelectMultiple } from "@/components/ui/select-multiple";
 
 type Props = {
   isOpen: boolean;
@@ -51,6 +63,7 @@ const formSchema = z.object({
   description: z.string().min(1),
   type: z.nativeEnum(EnumTransaccionType),
   method: z.nativeEnum(EnumTransaccionMethod),
+  tagIds: z.array(z.string()).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -67,12 +80,20 @@ const TransactionsModal = (props: Props) => {
       date: dayjs().toDate(),
       type: EnumTransaccionType.EXPENSE,
       method: EnumTransaccionMethod.YAPE,
+      tagIds: [],
     },
   });
 
   const createMutation = api.transactions.create.useMutation();
   const updateMutation = api.transactions.update.useMutation();
   const categoriesQuery = api.categories.getAll.useQuery({
+    pagination: {
+      page: 1,
+      pageSize: 100,
+    },
+  });
+
+  const tagsQuery = api.tags.getAll.useQuery({
     pagination: {
       page: 1,
       pageSize: 100,
@@ -88,6 +109,7 @@ const TransactionsModal = (props: Props) => {
         categoryId: values.categoryId,
         description: values.description,
         date: values.date.toISOString(),
+        tagIds: values.tagIds,
       },
       {
         onSuccess: (data) => {
@@ -123,6 +145,7 @@ const TransactionsModal = (props: Props) => {
         categoryId: values.categoryId,
         date: values.date.toISOString(),
         description: values.description,
+        tagIds: values.tagIds,
       },
       {
         onSuccess: (data) => {
@@ -145,8 +168,6 @@ const TransactionsModal = (props: Props) => {
   };
 
   const onSubmit = (values: FormValues) => {
-    console.log({ values });
-
     if (isEdit) {
       update(values);
       return;
@@ -156,9 +177,18 @@ const TransactionsModal = (props: Props) => {
   };
 
   const isLoading = createMutation.isPending || updateMutation.isPending;
+  const tags = useMemo(
+    () =>
+      tagsQuery.data?.data.map((v) => ({
+        value: v.id,
+        label: v.title,
+      })) ?? [],
+    [tagsQuery.data],
+  );
 
   useEffect(() => {
     if (props?.data) {
+      console.log(props.data);
       form.setValue("type", props.data.type);
       form.setValue("method", props.data.method);
       form.setValue("amount", String(props.data.amount));
@@ -168,6 +198,13 @@ const TransactionsModal = (props: Props) => {
         "date",
         props.data.date ? new Date(props.data.date) : new Date(),
       );
+
+      if (props?.data?.tags) {
+        form.setValue(
+          "tagIds",
+          props.data.tags.map((t) => t.tag.id),
+        );
+      }
     } else {
       form.reset();
     }
@@ -179,7 +216,7 @@ const TransactionsModal = (props: Props) => {
       isLoading={isLoading}
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title={isEdit ? "Edit transaction" : "Created transaction"}
+      title={isEdit ? "Edit transaction" : "Create transaction"}
       description={isEdit ? "Edit transaction" : "Create new transaction"}
     >
       <Form {...form}>
@@ -262,54 +299,104 @@ const TransactionsModal = (props: Props) => {
               <FormItem>
                 <FormLabel>Category</FormLabel>
                 <FormControl>
-                  <BasicSelect {...field}>
-                    <option value="">Select category</option>
-                    {categoriesQuery.data?.data.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.title}
-                      </option>
-                    ))}
-                  </BasicSelect>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {categoriesQuery.data?.data.map(({ id, title }) => (
+                        <SelectItem key={id} value={id}>
+                          {title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div className="grid w-full grid-cols-2 gap-4">
+            <FormField
+              name="method"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Method</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a method" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {transactionMethodOptions.map(({ label, value }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="type"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Transaction type</FormLabel>
+                  <FormControl>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a type" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {transactionTypeOptions.map(({ label, value }) => (
+                          <SelectItem key={value} value={value}>
+                            {label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
           <FormField
-            name="method"
+            name="tagIds"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Method</FormLabel>
+                <FormLabel>Tags</FormLabel>
                 <FormControl>
-                  <BasicSelect {...field}>
-                    <option value="">Select method</option>
-                    {Object.values(EnumTransaccionMethod).map((method) => (
-                      <option key={method} value={method}>
-                        {method}
-                      </option>
-                    ))}
-                  </BasicSelect>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="type"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Transaction type</FormLabel>
-                <FormControl>
-                  <BasicSelect {...field}>
-                    <option value="">Select type</option>
-                    {Object.values(EnumTransaccionType).map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </BasicSelect>
+                  <SelectMultiple
+                    data={tags}
+                    placeholder="Select tags"
+                    defaultValue={field.value ?? []}
+                    onValueChange={(options) => {
+                      field.onChange(options);
+                    }}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

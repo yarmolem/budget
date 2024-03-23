@@ -42,8 +42,16 @@ export const transactionsRouter = createTRPCRouter({
           ((input?.pagination?.page ?? 1) - 1) *
           (input?.pagination?.pageSize ?? 10),
         with: {
-          tags: true,
           category: true,
+          tags: {
+            columns: {
+              tagId: false,
+              transactionId: false,
+            },
+            with: {
+              tag: true,
+            },
+          },
         },
       });
 
