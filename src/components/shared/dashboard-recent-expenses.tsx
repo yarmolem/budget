@@ -1,78 +1,44 @@
 "use client";
 
 import { Fragment } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
-import { cn } from "@/lib/utils";
+import { Card, CardTitle, CardHeader, CardContent } from "../ui/card";
+import { cn, currencyUtils } from "@/lib/utils";
+import { api } from "@/trpc/react";
+import { EnumTransaccionType } from "@/interface";
 
 interface DashboardRecentExpensesProps {
   className?: string;
 }
 
 export function DashboardRecentExpenses(props: DashboardRecentExpensesProps) {
+  const { data } = api.transactions.getAll.useQuery({
+    pagination: { page: 1, pageSize: 6 },
+  });
+
   return (
     <Fragment>
       <Card className={cn(props.className)}>
         <CardHeader>
           <CardTitle>Recent transactions</CardTitle>
-          <CardDescription>
-            You made 265 transactions this month.
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
-            <div className="flex items-center">
-              <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  Olivia Martin
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  olivia.martin@email.com
-                </p>
+            {data?.data.map((transaction) => (
+              <div key={transaction.id} className="flex items-center">
+                <div className="ml-4 space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {transaction.description}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {transaction?.category?.title}
+                  </p>
+                </div>
+                <div className="ml-auto font-medium">
+                  {transaction.type === EnumTransaccionType.EXPENSE ? "-" : "+"}
+                  {currencyUtils.format(transaction.amount)}
+                </div>
               </div>
-              <div className="ml-auto font-medium">+$1,999.00</div>
-            </div>
-            <div className="flex items-center">
-              <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">Jackson Lee</p>
-                <p className="text-sm text-muted-foreground">
-                  jackson.lee@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$39.00</div>
-            </div>
-            <div className="flex items-center">
-              <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  Isabella Nguyen
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  isabella.nguyen@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$299.00</div>
-            </div>
-            <div className="flex items-center">
-              <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">William Kim</p>
-                <p className="text-sm text-muted-foreground">will@email.com</p>
-              </div>
-              <div className="ml-auto font-medium">+$99.00</div>
-            </div>
-            <div className="flex items-center">
-              <div className="ml-4 space-y-1">
-                <p className="text-sm font-medium leading-none">Sofia Davis</p>
-                <p className="text-sm text-muted-foreground">
-                  sofia.davis@email.com
-                </p>
-              </div>
-              <div className="ml-auto font-medium">+$39.00</div>
-            </div>
+            ))}
           </div>
         </CardContent>
       </Card>

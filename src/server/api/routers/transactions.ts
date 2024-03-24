@@ -3,19 +3,13 @@ import dayjs from "dayjs";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, like, sql, gte, lte } from "drizzle-orm";
 
+import { transactions, tagsOnTransactions } from "@/server/db/schema";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import {
-  transactions,
+  EnumPeriod,
   EnumTransaccionType,
   EnumTransaccionMethod,
-  tagsOnTransactions,
-} from "@/server/db/schema";
-import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-
-export enum EnumPeriod {
-  WEEK = "WEEK",
-  MONTH = "MONTH",
-  YEAR = "YEAR",
-}
+} from "@/interface";
 
 export const transactionsRouter = createTRPCRouter({
   getAll: protectedProcedure
@@ -35,7 +29,7 @@ export const transactionsRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const where = and(
         eq(transactions.authorId, ctx.session.user.id),
-        input?.search?.trim().length !== 0
+        input?.search && input?.search?.trim().length !== 0
           ? like(transactions.description, `%${input?.search}%`)
           : undefined,
       );
@@ -292,14 +286,15 @@ export const transactionsRouter = createTRPCRouter({
     return {
       totalIncome: currentMonthIncome,
       totalExpenses: currentMonthExpenses,
+      mostExpensiveCategory,
       percentageIncomeDifference,
       percentageExpensesDifference,
-      mostExpensiveCategory,
     };
   }),
-  getExpensesHistory: protectedProcedure
+  getTransactionsHistory: protectedProcedure
     .input(
       z.object({
+        type: z.nativeEnum(EnumTransaccionType).optional(),
         period: z.nativeEnum(EnumPeriod).default(EnumPeriod.WEEK),
       }),
     )
@@ -308,8 +303,8 @@ export const transactionsRouter = createTRPCRouter({
         const res = await ctx.db.query.transactions.findMany({
           where: and(
             eq(transactions.authorId, ctx.session.user.id),
-            eq(transactions.type, EnumTransaccionType.EXPENSE),
             gte(transactions.date, dayjs().subtract(7, "days").toDate()),
+            input.type ? eq(transactions.type, input.type) : undefined,
           ),
         });
 
@@ -319,39 +314,56 @@ export const transactionsRouter = createTRPCRouter({
             const date = dayjs(transaction.date).format("YYYY-MM-DD");
 
             if (!acc[date]) {
-              acc[date] = 0;
+              acc[date] = { income: 0, expense: 0 };
             }
 
-            acc[date] += transaction.amount;
+            const item = acc[date]!;
+
+            acc[date] = {
+              income:
+                transaction.type === EnumTransaccionType.INCOME
+                  ? item.income + transaction.amount
+                  : item.income,
+              expense:
+                transaction.type === EnumTransaccionType.EXPENSE
+                  ? item.expense + transaction.amount
+                  : item.expense,
+            };
 
             return acc;
           },
-          {} as Record<string, number>,
+          {} as Record<string, { income: number; expense: number }>,
         );
 
         // Fill missing days
-        let total = 0;
-        const data: { label: string; amount: number }[] = [];
-        const currentDate = dayjs();
+        const data: { label: string; income: number; expense: number }[] = [];
         const weekDays = 7;
+        const currentDate = dayjs();
         const dayStart = currentDate.subtract(7, "days");
 
         for (let i = 1; i <= weekDays; i++) {
           const date = dayStart.add(i, "day").format("YYYY-MM-DD");
 
           if (!groupedData[date]) {
-            data.push({ label: dayjs(date).format("ddd"), amount: 0 });
+            data.push({
+              label: dayjs(date).format("ddd"),
+              income: 0,
+              expense: 0,
+            });
           } else {
-            const amount = groupedData?.[date] ?? 0;
-            total += amount;
+            const item = groupedData?.[date] ?? null;
 
-            data.push({ amount, label: dayjs(date).format("ddd") });
+            data.push({
+              income: item?.income ?? 0,
+              expense: item?.expense ?? 0,
+              label: dayjs(date).format("ddd"),
+            });
           }
         }
 
         return {
           data,
-          total,
+          total: 0,
         };
       }
 
@@ -359,8 +371,8 @@ export const transactionsRouter = createTRPCRouter({
         const res = await ctx.db.query.transactions.findMany({
           where: and(
             eq(transactions.authorId, ctx.session.user.id),
-            eq(transactions.type, EnumTransaccionType.EXPENSE),
             gte(transactions.date, dayjs().subtract(1, "year").toDate()),
+            input.type ? eq(transactions.type, input.type) : undefined,
           ),
         });
 
@@ -370,39 +382,60 @@ export const transactionsRouter = createTRPCRouter({
             const date = dayjs(transaction.date).format("YYYY-MM");
 
             if (!acc[date]) {
-              acc[date] = 0;
+              acc[date] = {
+                income: 0,
+                expense: 0,
+              };
             }
 
-            acc[date] += transaction.amount;
+            const item = acc[date]!;
+
+            acc[date] = {
+              income:
+                transaction.type === EnumTransaccionType.INCOME
+                  ? item.income + transaction.amount
+                  : item.income,
+              expense:
+                transaction.type === EnumTransaccionType.EXPENSE
+                  ? item.expense + transaction.amount
+                  : item.expense,
+            };
 
             return acc;
           },
-          {} as Record<string, number>,
+          {} as Record<string, { income: number; expense: number }>,
         );
 
         // Fill missing days
-        let total = 0;
-        const data: { label: string; amount: number }[] = [];
+
         const monthsYear = 12;
         const currentDate = dayjs();
         const dayStart = currentDate.subtract(1, "year");
+        const data: { label: string; income: number; expense: number }[] = [];
 
         for (let i = 1; i <= monthsYear; i++) {
           const date = dayStart.add(i, "month").format("YYYY-MM");
 
           if (!groupedData[date]) {
-            data.push({ label: dayjs(date).format("mmm"), amount: 0 });
+            data.push({
+              label: dayjs(date).format("MMM"),
+              income: 0,
+              expense: 0,
+            });
           } else {
-            const amount = groupedData?.[date] ?? 0;
-            total += amount;
+            const item = groupedData?.[date] ?? null;
 
-            data.push({ amount, label: dayjs(date).format("mmm") });
+            data.push({
+              expense: item?.expense ?? 0,
+              income: item?.income ?? 0,
+              label: dayjs(date).format("MMM"),
+            });
           }
         }
 
         return {
           data,
-          total,
+          total: 0,
         };
       }
 

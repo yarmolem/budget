@@ -12,32 +12,25 @@ import {
 } from "recharts";
 
 import { ReChartsTooltip } from "./recharts-tooltip";
-import {
-  Card,
-  CardTitle,
-  CardHeader,
-  CardContent,
-  CardDescription,
-} from "../ui/card";
+import { Card, CardTitle, CardHeader, CardContent } from "../ui/card";
 
 import { api } from "@/trpc/react";
-import { cn, currencyUtils } from "@/lib/utils";
-import type { EnumPeriod } from "@/server/api/routers/transactions";
+import { cn } from "@/lib/utils";
+import { EnumTransaccionType } from "@/interface";
 
 type Props = {
   className?: string;
 };
 
 const DashboardExpensesHistory = (props: Props) => {
-  const { data } = api.transactions.getExpensesHistory.useQuery({
-    period: "WEEK" as EnumPeriod,
+  const { data } = api.transactions.getTransactionsHistory.useQuery({
+    type: EnumTransaccionType.EXPENSE,
   });
 
   return (
     <Card className={cn(props.className)}>
       <CardHeader>
-        <CardDescription>Expense History</CardDescription>
-        <CardTitle>{currencyUtils.format(data?.total ?? 0)}</CardTitle>
+        <CardTitle>Expense History</CardTitle>
       </CardHeader>
       <CardContent className="h-[27.3rem] w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -62,16 +55,18 @@ const DashboardExpensesHistory = (props: Props) => {
               axisLine={false}
               tickLine={false}
               tickMargin={20}
+              fontSize={14}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               tickMargin={20}
+              fontSize={14}
               tickFormatter={(label) => `S/ ${label}`}
             />
-            <Tooltip content={<ReChartsTooltip />} />
+            <Tooltip content={<ReChartsTooltip formattedNumber />} />
             <Area
-              dataKey="amount"
+              dataKey="expense"
               stroke="#EE0000"
               strokeWidth={3}
               fillOpacity={1}

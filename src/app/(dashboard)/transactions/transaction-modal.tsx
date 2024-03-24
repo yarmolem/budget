@@ -13,7 +13,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DialogFooter } from "@/components/ui/dialog";
 import { BasicModal } from "@/components/ui/basic-modal";
-import { BasicSelect } from "@/components/ui/basic-select";
 import {
   Popover,
   PopoverContent,
@@ -27,11 +26,7 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  EnumTransaccionType,
-  EnumTransaccionMethod,
-  type ITransaction,
-} from "@/server/db/schema";
+import { type ITransaction } from "@/server/db/schema";
 
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
@@ -47,6 +42,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SelectMultiple } from "@/components/ui/select-multiple";
+import { EnumTransaccionMethod, EnumTransaccionType } from "@/interface";
 
 type Props = {
   isOpen: boolean;

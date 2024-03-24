@@ -23,12 +23,9 @@ import { currencyUtils } from "@/lib/utils";
 import { usePagination } from "@/hooks/use-pagination";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-  EnumTransaccionType,
-  type ICategory,
-  type ITransaction,
-} from "@/server/db/schema";
+import { type ICategory, type ITransaction } from "@/server/db/schema";
 import { Badge } from "@/components/ui/badge";
+import { EnumTransaccionType } from "@/interface";
 
 const TransactionsPage = () => {
   const toggleModal = useToggle();

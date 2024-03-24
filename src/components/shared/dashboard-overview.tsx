@@ -9,78 +9,23 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { cn } from "@/lib/utils";
-import { ReChartsTooltip } from "./recharts-tooltip";
 
-const data = [
-  {
-    name: "Jan",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    income: Math.floor(Math.random() * 5000) + 1000,
-    expense: Math.floor(Math.random() * 5000) + 1000,
-  },
-];
+import { ReChartsTooltip } from "./recharts-tooltip";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+
+import { cn } from "@/lib/utils";
+import { api } from "@/trpc/react";
+import { EnumPeriod } from "@/interface";
 
 interface DashboardOverviewProps {
   className?: string;
 }
 
 export function DashboardOverview(props: DashboardOverviewProps) {
+  const { data } = api.transactions.getTransactionsHistory.useQuery({
+    period: EnumPeriod.MONTH,
+  });
+
   return (
     <Fragment>
       <Card className={cn(props.className)}>
@@ -89,9 +34,9 @@ export function DashboardOverview(props: DashboardOverviewProps) {
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={350}>
-            <BarChart data={data}>
+            <BarChart data={data?.data ?? []}>
               <XAxis
-                dataKey="name"
+                dataKey="label"
                 stroke="#888888"
                 fontSize={12}
                 tickLine={false}
@@ -102,10 +47,10 @@ export function DashboardOverview(props: DashboardOverviewProps) {
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => `S/ ${value}`}
               />
               <Tooltip
-                content={<ReChartsTooltip />}
+                content={<ReChartsTooltip formattedNumber />}
                 cursor={{ fill: "transparent" }}
               />
               <Bar

@@ -2,11 +2,12 @@ import { type InferSelectModel, relations, sql } from "drizzle-orm";
 import {
   int,
   text,
-  primaryKey,
-  sqliteTableCreator,
-  uniqueIndex,
   index,
+  primaryKey,
+  uniqueIndex,
+  sqliteTableCreator,
 } from "drizzle-orm/sqlite-core";
+import type { EnumTransaccionMethod, EnumTransaccionType } from "@/interface";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -15,20 +16,6 @@ import {
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
 export const createTable = sqliteTableCreator((name) => `budget_${name}`);
-
-export enum EnumTransaccionType {
-  INCOME = "INCOME",
-  EXPENSE = "EXPENSE",
-}
-
-export enum EnumTransaccionMethod {
-  YAPE = "YAPE",
-  CASH = "CASH",
-  DEPOSIT = "DEPOSIT",
-  DEBIT_CARD = "DEBIT_CARD",
-  TRANSFER = "TRANSFER",
-  OTHER = "OTHER",
-}
 
 export const users = createTable(
   "user",

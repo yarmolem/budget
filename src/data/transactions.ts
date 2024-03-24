@@ -1,4 +1,4 @@
-import { EnumTransaccionMethod, EnumTransaccionType } from "@/server/db/schema";
+import { EnumTransaccionMethod, EnumTransaccionType } from "@/interface";
 
 export const transactionTypeOptions: {
   label: string;

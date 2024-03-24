@@ -4,7 +4,12 @@ import type {
   Payload,
 } from "recharts/types/component/DefaultTooltipContent";
 import type { TooltipProps } from "recharts";
-import { addSpacesToCamelCase, cn, formatNumber } from "@/lib/utils";
+import {
+  addSpacesToCamelCase,
+  cn,
+  currencyUtils,
+  formatNumber,
+} from "@/lib/utils";
 
 function isValidHexColor(colorCode: string) {
   const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
@@ -63,7 +68,7 @@ export function ReChartsTooltip({
                 <span className="font-medium text-muted-foreground">
                   {prefix && prefix}
                   {formattedNumber
-                    ? formatNumber(item.value as number)
+                    ? currencyUtils.format(item.value as number)
                     : item.value}
                   {postfix && postfix}
                 </span>
