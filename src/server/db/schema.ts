@@ -174,6 +174,6 @@ export type ITag = InferSelectModel<typeof tags>;
 export type IUser = InferSelectModel<typeof users>;
 export type ICategory = InferSelectModel<typeof categories>;
 export type ITransaction = InferSelectModel<typeof transactions> & {
-  tags?: { tag: ITag }[];
   category?: ICategory;
+  tags?: { tag: ITag }[];
 };

@@ -1,7 +1,7 @@
 import "@/styles/globals.css";
 
-import { Nunito_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import { Nunito_Sans } from "next/font/google";
 
 import Providers from "@/components/providers";
 import { getServerAuthSession } from "@/server/auth";
