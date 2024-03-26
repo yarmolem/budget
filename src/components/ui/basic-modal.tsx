@@ -10,6 +10,7 @@ import {
 
 import { Button } from "./button";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "@/hooks/use-translation";
 
 type Props = {
   footer?: boolean;
@@ -25,6 +26,8 @@ type Props = {
 };
 
 const BasicModal = (props: Props) => {
+  const { t } = useTranslation(["common"]);
+
   return (
     <Dialog open={props.isOpen} onOpenChange={props.onClose}>
       <DialogContent className={props.className}>
@@ -46,7 +49,7 @@ const BasicModal = (props: Props) => {
               variant="destructive"
               onClick={props.onCancel}
             >
-              Cancelar
+              {t("common:cancel")}
             </Button>
             <Button
               disabled={props.isLoading}
@@ -55,7 +58,7 @@ const BasicModal = (props: Props) => {
               onClick={props.onSave}
             >
               {props.isLoading && <Loader2 className="mr-2 animate-spin" />}
-              Aceptar
+              {t("common:accept")}
             </Button>
           </DialogFooter>
         )}

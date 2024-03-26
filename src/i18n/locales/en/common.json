@@ -1,0 +1,22 @@
+{
+  "add": "Add",
+  "title": "Title",
+  "color": "Color",
+  "created": "Created",
+  "actions": "Actions",
+  "cancel": "Cancel",
+  "save": "Save",
+  "edit": "Edit",
+  "delete": "Delete",
+  "open_menu": "Open menu",
+  "something_went_wrong": "Something went wrong",
+  "placeholder_search": "Search...",
+  "accept": "Accept",
+  "description": "Description",
+  "tags": "Tags",
+  "category": "Category",
+  "amount": "Amount",
+  "date": "Date",
+  "method": "Method",
+  "transaction_type": "Transaction type"
+}

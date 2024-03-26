@@ -16,12 +16,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { cn } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { EnumPeriod } from "@/interface";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface DashboardOverviewProps {
   className?: string;
 }
 
 export function DashboardOverview(props: DashboardOverviewProps) {
+  const { t } = useTranslation("dashboard-page");
   const { data } = api.transactions.getTransactionsHistory.useQuery({
     period: EnumPeriod.MONTH,
   });
@@ -30,7 +32,7 @@ export function DashboardOverview(props: DashboardOverviewProps) {
     <Fragment>
       <Card className={cn(props.className)}>
         <CardHeader>
-          <CardTitle>Transactions</CardTitle>
+          <CardTitle>{t("transactions")}</CardTitle>
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={350}>

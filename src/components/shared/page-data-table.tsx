@@ -21,6 +21,7 @@ import {
 import { Button, buttonVariants } from "../ui/button";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { useTranslation } from "@/hooks/use-translation";
 
 type Props<T extends object> = {
   data: T[];
@@ -38,6 +39,7 @@ const buttonProps = buttonVariants({ size: "icon", variant: "ghost" });
 const activeButtonProps = buttonVariants({ size: "icon", variant: "outline" });
 
 const PageDataTable = <T extends object>(props: Props<T>) => {
+  const { t } = useTranslation("common");
   return (
     <>
       <div className="flex h-full w-full flex-1 flex-col">
@@ -49,7 +51,7 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
         <CardContent className="flex flex-row justify-between">
           <Input
             className="w-72"
-            placeholder="Search..."
+            placeholder={t("placeholder_search")}
             leftIcon={<SearchIcon className="w-5" />}
             defaultValue=""
             onChange={(e) => props.onChangeText?.(e.target.value)}
@@ -57,7 +59,7 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
 
           <Button onClick={props.onAdd}>
             <PlusIcon className="mr-2 h-4 w-4" />
-            Add
+            {t("add")}
           </Button>
         </CardContent>
 

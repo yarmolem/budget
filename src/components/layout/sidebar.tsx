@@ -7,6 +7,7 @@ import { PieChart, type LucideProps, List, Euro, Tag } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { signOut } from "next-auth/react";
+import { useTranslation } from "@/hooks/use-translation";
 
 export interface NavItem {
   title: string;
@@ -16,38 +17,40 @@ export interface NavItem {
   description?: string;
   icon?: (props: LucideProps) => React.ReactNode;
 }
-const items: NavItem[] = [
-  {
-    href: "/",
-    icon: PieChart,
-    title: "Dashboard",
-  },
-  {
-    icon: List,
-    href: "/categories",
-    title: "Categories",
-  },
-  {
-    icon: Euro,
-    href: "/transactions",
-    title: "Transactions",
-  },
-  {
-    icon: Tag,
-    href: "/tags",
-    title: "Tags",
-  },
-];
 
 export default function Sidebar() {
   const path = usePathname();
+  const { t } = useTranslation("sidebar");
+
+  const items: NavItem[] = [
+    {
+      href: "/",
+      icon: PieChart,
+      title: t("dashboard"),
+    },
+    {
+      icon: List,
+      href: "/categories",
+      title: t("categories"),
+    },
+    {
+      icon: Euro,
+      href: "/transactions",
+      title: t("transactions"),
+    },
+    {
+      icon: Tag,
+      href: "/tags",
+      title: t("tags"),
+    },
+  ];
 
   return (
     <aside className="h-screen w-64 py-3 pl-3">
       <Card className={cn(`relative flex h-full flex-col`)}>
         <CardHeader>
-          <Link href="/" className="flex items-center space-x-3">
-            <h1 className="text-2xl font-bold">LOGO</h1>
+          <Link href="/" className="flex items-center justify-center space-x-3">
+            <h1 className="text-center text-2xl font-bold">LOGO</h1>
           </Link>
         </CardHeader>
         <CardContent className="p-3">
@@ -80,7 +83,7 @@ export default function Sidebar() {
             variant="destructive"
             onClick={() => void signOut()}
           >
-            Sign out
+            {t("logout")}
           </Button>
         </CardFooter>
       </Card>

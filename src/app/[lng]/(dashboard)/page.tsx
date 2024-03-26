@@ -12,7 +12,6 @@ const DashboardHome = () => {
     <>
       <DashboardKpis className="mb-4" />
       <DashboardOverview className="mb-4" />
-
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
         <DashboardExpensesHistory className="col-span-4" />
         <DashboardRecentExpenses className="col-span-3" />

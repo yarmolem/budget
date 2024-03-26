@@ -17,12 +17,14 @@ import { Card, CardTitle, CardHeader, CardContent } from "../ui/card";
 import { api } from "@/trpc/react";
 import { cn } from "@/lib/utils";
 import { EnumTransaccionType } from "@/interface";
+import { useTranslation } from "@/hooks/use-translation";
 
 type Props = {
   className?: string;
 };
 
 const DashboardExpensesHistory = (props: Props) => {
+  const { t } = useTranslation("dashboard-page");
   const { data } = api.transactions.getTransactionsHistory.useQuery({
     type: EnumTransaccionType.EXPENSE,
   });
@@ -30,7 +32,7 @@ const DashboardExpensesHistory = (props: Props) => {
   return (
     <Card className={cn(props.className)}>
       <CardHeader>
-        <CardTitle>Expense History</CardTitle>
+        <CardTitle>{t("expense_history")}</CardTitle>
       </CardHeader>
       <CardContent className="h-[27.3rem] w-full">
         <ResponsiveContainer width="100%" height="100%">

@@ -20,12 +20,12 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { type ICategory } from "@/server/db/schema";
-import { Checkbox } from "@/components/ui/checkbox";
+import { type ITag } from "@/server/db/schema";
+import { useTranslation } from "@/hooks/use-translation";
 
 type Props = {
   isOpen: boolean;
-  data: ICategory | null;
+  data: ITag | null;
   onClose: () => void;
   onCreate?: () => void;
   onUpdate?: () => void;
@@ -33,8 +33,6 @@ type Props = {
 
 const formSchema = z.object({
   title: z.string().min(1),
-  color: z.string().min(1),
-  isIncome: z.boolean(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -42,40 +40,35 @@ type FormValues = z.infer<typeof formSchema>;
 const CategoryModal = (props: Props) => {
   const isEdit = props.data !== null;
 
+  const { t } = useTranslation(["common", "tags-page"]);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      color: "",
-      isIncome: true,
     },
   });
 
-  const createMutation = api.categories.create.useMutation();
-  const updateMutation = api.categories.update.useMutation();
+  const createMutation = api.tags.create.useMutation();
+  const updateMutation = api.tags.update.useMutation();
 
   const create = (values: FormValues) => {
     createMutation.mutate(
-      {
-        title: values.title,
-        color: values.color,
-        isIncome: values.isIncome,
-      },
+      { title: values.title },
       {
         onSuccess: (data) => {
           if (!data?.id) {
-            toast.error("Error creating category");
+            toast.error(t("tags-page:error_create_tag"));
             return;
           }
 
-          toast.success("Category created successfully");
+          toast.success(t("tags-page:success_create_tag"));
           props.onCreate?.();
           props.onClose();
           form.reset();
         },
         onError: (error) => {
-          console.log("[ERROR_CREATE_CATEGORY]: ", error);
-          toast.error("Something went wrong");
+          console.log("[ERROR_CREATE_TAG]: ", error);
+          toast.error(t("common:something_went_wrong"));
         },
       },
     );
@@ -87,27 +80,22 @@ const CategoryModal = (props: Props) => {
     }
 
     updateMutation.mutate(
-      {
-        id: props.data.id,
-        title: values.title,
-        color: values.color,
-        isIncome: values.isIncome,
-      },
+      { id: props.data.id, title: values.title },
       {
         onSuccess: (data) => {
           if (!data?.id) {
-            toast.error("Error updating category");
+            toast.error(t("tags-page:error_update_tag"));
             return;
           }
 
-          toast.success("Category updated successfully");
+          toast.success(t("tags-page:success_update_tag"));
           props.onUpdate?.();
           props.onClose();
           form.reset();
         },
         onError: (error) => {
-          console.log("[ERROR_UPDATE_CATEGORY]: ", error);
-          toast.error("Something went wrong");
+          console.log("[ERROR_UPDATE_TAG]: ", error);
+          toast.error(t("common:something_went_wrong"));
         },
       },
     );
@@ -127,7 +115,6 @@ const CategoryModal = (props: Props) => {
   useEffect(() => {
     if (props?.data) {
       form.setValue("title", props?.data?.title ?? "");
-      form.setValue("color", props?.data?.color ?? 0);
     } else {
       form.reset();
     }
@@ -139,8 +126,7 @@ const CategoryModal = (props: Props) => {
       isLoading={isLoading}
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title={isEdit ? "Edit category" : "Created category"}
-      description={isEdit ? "Edit category" : "Create new category"}
+      title={isEdit ? t("tags-page:update_tag") : t("tags-page:create_tag")}
     >
       <Form {...form}>
         <form
@@ -152,41 +138,10 @@ const CategoryModal = (props: Props) => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title</FormLabel>
+                <FormLabel>{t("common:title")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter title" {...field} />
+                  <Input placeholder={t("tags-page:enter_title")} {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="color"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Color</FormLabel>
-                <FormControl>
-                  <Input type="color" placeholder="Enter color" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            name="isIncome"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="flex items-center gap-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onBlur={field.onBlur}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel>is income ?</FormLabel>
                 <FormMessage />
               </FormItem>
             )}
@@ -194,11 +149,11 @@ const CategoryModal = (props: Props) => {
 
           <DialogFooter>
             <Button type="button" onClick={props.onClose} variant="destructive">
-              Cancel
+              {t("common:cancel")}
             </Button>
             <Button disabled={isLoading} type="submit" variant="outline">
               {isLoading && <Loader2 className="mr-2 animate-spin" />}
-              {isEdit ? "Update" : "Create"}
+              {t("common:save")}
             </Button>
           </DialogFooter>
         </form>

@@ -1,0 +1,15 @@
+{
+  "tags": "Etiquetas",
+  "manage_your_tags": "Administra tus etiquetas",
+  "create_tag": "Crear una etiqueta",
+  "update_tag": "Actualizar una etiqueta",
+  "delete_tag": "Eliminar una etiqueta",
+  "error_create_tag": "Error creando una etiqueta",
+  "error_update_tag": "Error actualizando una etiqueta",
+  "error_delete_tag": "Error eliminando una etiqueta",
+  "success_create_tag": "Etiqueta creado exitosamente",
+  "success_update_tag": "Etiqueta actualizado exitosamente",
+  "success_delete_tag": "Etiqueta eliminado exitosamente",
+  "enter_title": "Ingresa un título",
+  "sure_delete_tag": "¿Estás seguro de que deseas eliminar esta etiqueta?"
+}

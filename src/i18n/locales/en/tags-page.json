@@ -1,0 +1,15 @@
+{
+  "tags": "Tags",
+  "manage_your_tags": "Manage your tags",
+  "create_tag": "Create a tag",
+  "update_tag": "Update a tag",
+  "delete_tag": "Delete a tag",
+  "error_create_tag": "Error creating a tag",
+  "error_update_tag": "Error updating a tag",
+  "error_delete_tag": "Error deleting a tag",
+  "success_create_tag": "Tag created successfully",
+  "success_update_tag": "Tag updated successfully",
+  "success_delete_tag": "Tag deleted successfully",
+  "enter_title": "Enter a title",
+  "sure_delete_tag": "Are you sure you want to delete this tag?"
+}

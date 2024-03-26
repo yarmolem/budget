@@ -1,0 +1,23 @@
+{
+  "add": "Añadir",
+  "title": "Título",
+  "color": "Color",
+  "created": "Creado",
+  "actions": "Acciones",
+  "cancel": "Cancelar",
+  "save": "Guardar",
+
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "open_menu": "Abrir menú",
+  "something_went_wrong": "Algo salió mal",
+  "placeholder_search": "Buscar...",
+  "accept": "Aceptar",
+  "description": "Descripción",
+  "tags": "Etiquetas",
+  "category": "Categoría",
+  "amount": "Cantidad",
+  "date": "Fecha",
+  "method": "Método",
+  "transaction_type": "Tipo de transacción"
+}

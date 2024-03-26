@@ -1,0 +1,17 @@
+{
+  "categories": "Categories",
+  "manage_your_categories": "Manage your categories",
+  "create_category": "Create category",
+  "update_category": "Update category",
+  "delete_category": "Delete category",
+  "is_income": "Is income?",
+  "error_create_category": "Error creating category",
+  "error_update_category": "Error updating category",
+  "error_delete_category": "Error deleting category",
+  "success_create_category": "Category created successfully",
+  "success_update_category": "Category updated successfully",
+  "success_delete_category": "Category deleted successfully",
+  "enter_color": "Enter a color",
+  "enter_title": "Enter a title",
+  "sure_delete_category": "Are you sure you want to delete this category?"
+}

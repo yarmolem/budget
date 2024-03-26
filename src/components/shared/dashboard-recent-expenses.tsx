@@ -5,12 +5,14 @@ import { Card, CardTitle, CardHeader, CardContent } from "../ui/card";
 import { cn, currencyUtils } from "@/lib/utils";
 import { api } from "@/trpc/react";
 import { EnumTransaccionType } from "@/interface";
+import { useTranslation } from "@/hooks/use-translation";
 
 interface DashboardRecentExpensesProps {
   className?: string;
 }
 
 export function DashboardRecentExpenses(props: DashboardRecentExpensesProps) {
+  const { t } = useTranslation("dashboard-page");
   const { data } = api.transactions.getAll.useQuery({
     pagination: { page: 1, pageSize: 6 },
   });
@@ -19,7 +21,7 @@ export function DashboardRecentExpenses(props: DashboardRecentExpensesProps) {
     <Fragment>
       <Card className={cn(props.className)}>
         <CardHeader>
-          <CardTitle>Recent transactions</CardTitle>
+          <CardTitle>{t("recent_transactions")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-8">

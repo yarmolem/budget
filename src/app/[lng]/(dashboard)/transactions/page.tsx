@@ -2,7 +2,7 @@
 
 import dayjs from "dayjs";
 import toast from "react-hot-toast";
-import { MoreHorizontal } from "lucide-react";
+import { Edit2Icon, MoreHorizontal, Trash2Icon } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 
@@ -26,8 +26,11 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { type ICategory, type ITransaction } from "@/server/db/schema";
 import { Badge } from "@/components/ui/badge";
 import { EnumTransaccionType } from "@/interface";
+import { useTranslation } from "@/hooks/use-translation";
 
 const TransactionsPage = () => {
+  const { t } = useTranslation(["common", "transactions-page"]);
+
   const toggleModal = useToggle();
   const toggleAlert = useToggle();
   const pagination = usePagination();
@@ -50,11 +53,11 @@ const TransactionsPage = () => {
           void refetch();
           setSelectedId(null);
           toggleAlert.onClose();
-          toast.success("Transaction deleted successfully");
+          toast.success(t("transactions-page:success_delete_transaction"));
         },
         onError: (error) => {
           console.log("[ERROR_DELETE_TRANSACTION]", error);
-          toast.error("Something went wrong");
+          toast.error(t("common:something_went_wrong"));
         },
       },
     );
@@ -63,12 +66,12 @@ const TransactionsPage = () => {
   const columns: ColumnDef<ITransaction>[] = useMemo(() => {
     return [
       {
-        header: "Description",
+        header: t("common:description"),
         accessorKey: "description",
       },
       {
         accessorKey: "tags",
-        header: () => <p className="text-left">Tags</p>,
+        header: () => <p className="text-left">{t("common:tags")}</p>,
         cell: ({ row }) => (
           <div className="text-cente flex max-w-sm flex-wrap gap-1">
             {row?.original?.tags?.map((tag) => (
@@ -79,14 +82,14 @@ const TransactionsPage = () => {
       },
       {
         accessorKey: "category",
-        header: () => <p className="text-center">Category</p>,
+        header: () => <p className="text-center">{t("common:category")}</p>,
         cell: ({ cell }) => (
           <p className="text-center">{(cell.getValue() as ICategory).title}</p>
         ),
       },
       {
         accessorKey: "amount",
-        header: () => <p className="text-center">Amount</p>,
+        header: () => <p className="text-center">{t("common:amount")}</p>,
         cell: ({ cell, row }) => (
           <div className="text-center">
             {row.original.type === EnumTransaccionType.INCOME ? (
@@ -103,7 +106,7 @@ const TransactionsPage = () => {
       },
       {
         accessorKey: "date",
-        header: () => <p className="text-center">Date</p>,
+        header: () => <p className="text-center">{t("common:date")}</p>,
         cell: ({ cell }) => (
           <p className="text-center">
             {dayjs(cell.getValue() as string).format("DD/MM/YYYY")}
@@ -117,7 +120,7 @@ const TransactionsPage = () => {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="mx-auto h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">{t("common:open_menu")}</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -128,7 +131,8 @@ const TransactionsPage = () => {
                   toggleModal.onOpen();
                 }}
               >
-                Edit
+                <Edit2Icon className="mr-2 h-4 w-4" />
+                {t("common:edit")}
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
@@ -136,7 +140,8 @@ const TransactionsPage = () => {
                   toggleAlert.onOpen();
                 }}
               >
-                Delete
+                <Trash2Icon className="mr-2 h-4 w-4" />
+                {t("common:delete")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -152,8 +157,8 @@ const TransactionsPage = () => {
   return (
     <>
       <PageDataTable<ITransaction>
-        title="Transactions"
-        description="Manage your transactions here."
+        title={t("transactions-page:transactions")}
+        description={t("transactions-page:manage_your_transactions")}
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}
@@ -183,8 +188,8 @@ const TransactionsPage = () => {
 
       <BasicModal
         footer
-        title="Delete transaction"
-        description="Are you sure you want to delete this transaction?"
+        title={t("transactions-page:delete_transaction")}
+        description={t("transactions-page:sure_delete_transaction")}
         isOpen={toggleAlert.isOpen}
         onClose={toggleAlert.onClose}
         isLoading={deleteMutation.isPending}

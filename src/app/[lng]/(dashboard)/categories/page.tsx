@@ -1,7 +1,7 @@
 "use client";
 
 import dayjs from "dayjs";
-import { MoreHorizontal } from "lucide-react";
+import { Edit2Icon, MoreHorizontal, Trash2Icon } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import useToggle from "@/hooks/use-toggle";
 import toast from "react-hot-toast";
 import { useDebounceCallback } from "usehooks-ts";
 import { usePagination } from "@/hooks/use-pagination";
+import { useTranslation } from "@/hooks/use-translation";
 
 export type Category = {
   id: string;
@@ -32,6 +33,8 @@ export type Category = {
 };
 
 const CategoriesPage = () => {
+  const { t } = useTranslation(["common", "categories-page"]);
+
   const toggleModal = useToggle();
   const toggleAlert = useToggle();
   const [text, setText] = useState("");
@@ -68,12 +71,12 @@ const CategoriesPage = () => {
   const columns: ColumnDef<Category>[] = useMemo(() => {
     return [
       {
-        header: "Title",
+        header: t("common:title"),
         accessorKey: "title",
       },
       {
         accessorKey: "color",
-        header: () => <p className="text-center">Color</p>,
+        header: () => <p className="text-center">{t("common:color")}</p>,
         cell: ({ cell }) => {
           return (
             <div
@@ -85,7 +88,7 @@ const CategoriesPage = () => {
       },
       {
         accessorKey: "createdAt",
-        header: () => <p className="text-center">Created</p>,
+        header: () => <p className="text-center">{t("common:created")}</p>,
         cell: ({ cell }) => (
           <p className="text-center">
             {dayjs(cell.getValue() as string).format("DD/MM/YYYY")}
@@ -94,34 +97,38 @@ const CategoriesPage = () => {
       },
       {
         id: "actions",
-        header: "Actions",
+        header: () => <p className="text-center">{t("common:actions")}</p>,
         cell: ({ row }) => (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="mx-auto h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => {
-                  setSelectedId(row.original.id);
-                  toggleModal.onOpen();
-                }}
-              >
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  setSelectedId(row.original.id);
-                  toggleAlert.onOpen();
-                }}
-              >
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex w-full">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="mx-auto h-8 w-8 p-0">
+                  <span className="sr-only">{t("common:open_menu")}</span>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedId(row.original.id);
+                    toggleModal.onOpen();
+                  }}
+                >
+                  <Edit2Icon className="mr-2 h-4 w-4" />
+                  {t("common:edit")}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    setSelectedId(row.original.id);
+                    toggleAlert.onOpen();
+                  }}
+                >
+                  <Trash2Icon className="mr-2 h-4 w-4" />
+                  {t("common:delete")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         ),
       },
     ];
@@ -134,8 +141,8 @@ const CategoriesPage = () => {
   return (
     <>
       <PageDataTable<Category>
-        title="Categories"
-        description="Manage your categories"
+        title={t("categories-page:categories")}
+        description={t("categories-page:manage_your_categories")}
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}
@@ -165,8 +172,8 @@ const CategoriesPage = () => {
 
       <BasicModal
         footer
-        title="Delete Category"
-        description="Are you sure you want to delete this category?"
+        title={t("categories-page:delete_category")}
+        description={t("categories-page:sure_delete_category")}
         isOpen={toggleAlert.isOpen}
         onClose={toggleAlert.onClose}
         isLoading={deleteMutation.isPending}

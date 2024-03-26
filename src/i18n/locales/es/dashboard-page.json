@@ -1,0 +1,9 @@
+{
+  "total_income": "Total ingresos",
+  "total_expense": "Total gastos",
+  "most_expensive_category": "Categoría con mas gasto",
+  "transactions": "Transacciones",
+  "expense_history": "Historial de gastos",
+  "recent_transactions": "Transacciones recientes",
+  "from_last_month": "del mes pasado"
+}

@@ -1,0 +1,20 @@
+{
+  "transactions": "Transactions",
+  "manage_your_transactions": "Manage your transactions",
+  "create_transaction": "Create transaction",
+  "update_transaction": "Update transaction",
+  "delete_transaction": "Delete transaction",
+  "error_create_transaction": "Error creating transaction",
+  "error_update_transaction": "Error updating transaction",
+  "error_delete_transaction": "Error deleting transaction",
+  "success_create_transaction": "Transaction created successfully",
+  "success_update_transaction": "Transaction updated successfully",
+  "success_delete_transaction": "Transaction deleted successfully",
+  "enter_description": "Enter a description",
+  "enter_amount": "Enter an amount",
+  "select_date": "Select a date",
+  "select_type": "Select a type",
+  "select_method": "Select a method",
+  "select_tags": "Select tags",
+  "sure_delete_transaction": "Are you sure you want to delete this transaction?"
+}

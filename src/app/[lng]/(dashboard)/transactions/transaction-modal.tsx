@@ -43,6 +43,7 @@ import {
 } from "@/components/ui/select";
 import { SelectMultiple } from "@/components/ui/select-multiple";
 import { EnumTransaccionMethod, EnumTransaccionType } from "@/interface";
+import { useTranslation } from "@/hooks/use-translation";
 
 type Props = {
   isOpen: boolean;
@@ -67,6 +68,7 @@ type FormValues = z.infer<typeof formSchema>;
 const TransactionsModal = (props: Props) => {
   const isEdit = props.data !== null;
 
+  const { t } = useTranslation(["common", "transactions-page"]);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -110,18 +112,18 @@ const TransactionsModal = (props: Props) => {
       {
         onSuccess: (data) => {
           if (!data?.id) {
-            toast.error("Error creating transaction");
+            toast.error(t("transactions-page:error_create_transaction"));
             return;
           }
 
-          toast.success("Transaction created successfully");
+          toast.success(t("transactions-page:success_create_transaction"));
           props.onCreate?.();
           props.onClose();
           form.reset();
         },
         onError: (error) => {
           console.log("[ERROR_CREATE_TRANSACTION]: ", error);
-          toast.error("Something went wrong");
+          toast.error(t("common:something_went_wrong"));
         },
       },
     );
@@ -146,18 +148,18 @@ const TransactionsModal = (props: Props) => {
       {
         onSuccess: (data) => {
           if (!data?.id) {
-            toast.error("Error updating transaction");
+            toast.error(t("transactions-page:error_update_transaction"));
             return;
           }
 
-          toast.success("Transaction updated successfully");
+          toast.success(t("transactions-page:success_update_transaction"));
           props.onUpdate?.();
           props.onClose();
           form.reset();
         },
         onError: (error) => {
           console.log("[ERROR_UPDATE_TRANSACTION]: ", error);
-          toast.error("Something went wrong");
+          toast.error(t("common:something_went_wrong"));
         },
       },
     );
@@ -212,8 +214,11 @@ const TransactionsModal = (props: Props) => {
       isLoading={isLoading}
       isOpen={props.isOpen}
       onClose={props.onClose}
-      title={isEdit ? "Edit transaction" : "Create transaction"}
-      description={isEdit ? "Edit transaction" : "Create new transaction"}
+      title={
+        isEdit
+          ? t("transactions-page:update_transaction")
+          : t("transactions-page:create_transaction")
+      }
     >
       <Form {...form}>
         <form
@@ -225,9 +230,12 @@ const TransactionsModal = (props: Props) => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
+                <FormLabel>{t("common:description")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter description" {...field} />
+                  <Input
+                    placeholder={t("transactions-page:enter_description")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -238,9 +246,12 @@ const TransactionsModal = (props: Props) => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Amount</FormLabel>
+                <FormLabel>{t("common:amount")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter amount" {...field} />
+                  <Input
+                    placeholder={t("transactions-page:enter_amount")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -252,7 +263,7 @@ const TransactionsModal = (props: Props) => {
             control={form.control}
             render={({ field }) => (
               <FormItem className="flex flex-col">
-                <FormLabel>Date</FormLabel>
+                <FormLabel>{t("common:date")}</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -266,7 +277,7 @@ const TransactionsModal = (props: Props) => {
                         {field.value ? (
                           dayjs(field.value).format("DD/MM/YYYY")
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t("transactions-page:select_date")}</span>
                         )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
@@ -293,7 +304,7 @@ const TransactionsModal = (props: Props) => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category</FormLabel>
+                <FormLabel>{t("common:category")}</FormLabel>
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
@@ -301,7 +312,9 @@ const TransactionsModal = (props: Props) => {
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue
+                          placeholder={t("transactions-page:select_category")}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -323,7 +336,7 @@ const TransactionsModal = (props: Props) => {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Method</FormLabel>
+                  <FormLabel>{t("common:method")}</FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={field.onChange}
@@ -331,7 +344,9 @@ const TransactionsModal = (props: Props) => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a method" />
+                          <SelectValue
+                            placeholder={t("transactions-page:select_method")}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -352,7 +367,7 @@ const TransactionsModal = (props: Props) => {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Transaction type</FormLabel>
+                  <FormLabel>{t("common:transaction_type")}</FormLabel>
                   <FormControl>
                     <Select
                       onValueChange={field.onChange}
@@ -360,7 +375,9 @@ const TransactionsModal = (props: Props) => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a type" />
+                          <SelectValue
+                            placeholder={t("transactions-page:select_type")}
+                          />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -383,11 +400,11 @@ const TransactionsModal = (props: Props) => {
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tags</FormLabel>
+                <FormLabel>{t("common:tags")}</FormLabel>
                 <FormControl>
                   <SelectMultiple
                     data={tags}
-                    placeholder="Select tags"
+                    placeholder={t("transactions-page:select_tags")}
                     defaultValue={field.value ?? []}
                     onValueChange={(options) => {
                       field.onChange(options);
@@ -401,11 +418,11 @@ const TransactionsModal = (props: Props) => {
 
           <DialogFooter>
             <Button type="button" onClick={props.onClose} variant="destructive">
-              Cancel
+              {t("common:cancel")}
             </Button>
             <Button disabled={isLoading} type="submit" variant="outline">
               {isLoading && <Loader2 className="mr-2 animate-spin" />}
-              {isEdit ? "Update" : "Create"}
+              {t("common:save")}
             </Button>
           </DialogFooter>
         </form>
