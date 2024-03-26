@@ -6,8 +6,8 @@ import { migrate } from "drizzle-orm/libsql/migrator";
 
 const main = async () => {
   const client = createClient({
-    url: process.env.TURSO_CONNECTION_URL,
-    authToken: process.env.TURSO_AUTH_TOKEN,
+    url: process?.env?.TURSO_CONNECTION_URL ?? "",
+    authToken: process?.env?.TURSO_AUTH_TOKEN ?? "",
   });
 
   const db = drizzle(client);

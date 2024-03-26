@@ -4,12 +4,7 @@ import type {
   Payload,
 } from "recharts/types/component/DefaultTooltipContent";
 import type { TooltipProps } from "recharts";
-import {
-  addSpacesToCamelCase,
-  cn,
-  currencyUtils,
-  formatNumber,
-} from "@/lib/utils";
+import { addSpacesToCamelCase, cn, currencyUtils } from "@/lib/utils";
 
 function isValidHexColor(colorCode: string) {
   const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;

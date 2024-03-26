@@ -1,4 +1,4 @@
-import React, { use, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { XIcon } from "lucide-react";
 import {
   Select,
@@ -8,7 +8,6 @@ import {
   SelectTrigger,
 } from "./select";
 import { Badge } from "./badge";
-import type { EnumTransaccionMethod } from "@/server/db/schema";
 
 type Option = { label: string; value: string };
 
@@ -71,7 +70,7 @@ const SelectMultiple = ({
     <>
       <Select
         value={value}
-        onValueChange={(value: EnumTransaccionMethod) => {
+        onValueChange={(value: string) => {
           setValue(value);
           handleAdd(value);
         }}

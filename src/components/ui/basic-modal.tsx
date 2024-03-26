@@ -1,35 +1,35 @@
-import React from 'react'
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
-} from './dialog'
+  DialogTitle,
+} from "./dialog";
 
-import { Button } from './button'
-import { Loader2 } from 'lucide-react'
+import { Button } from "./button";
+import { Loader2 } from "lucide-react";
 
 type Props = {
-  footer?: boolean
-  isLoading?: boolean
-  title?: string
-  description?: string
-  children?: React.ReactNode
-  isOpen: boolean
-  onSave?: () => void
-  onCancel?: () => void
-  onClose: () => void
-  className?: string
-}
+  footer?: boolean;
+  isLoading?: boolean;
+  title?: string;
+  description?: string;
+  children?: React.ReactNode;
+  isOpen: boolean;
+  onSave?: () => void;
+  onCancel?: () => void;
+  onClose: () => void;
+  className?: string;
+};
 
 const BasicModal = (props: Props) => {
   return (
     <Dialog open={props.isOpen} onOpenChange={props.onClose}>
       <DialogContent className={props.className}>
         <DialogHeader>
-          {(props.title || props.description) && (
+          {(props.title ?? props.description) && (
             <>
               {props.title && <DialogTitle>{props.title}</DialogTitle>}
               {props.description && (
@@ -61,7 +61,7 @@ const BasicModal = (props: Props) => {
         )}
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export { BasicModal }
+export { BasicModal };

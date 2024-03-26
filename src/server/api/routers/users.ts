@@ -16,16 +16,17 @@ export const usersRouter = createTRPCRouter({
         return null;
       }
 
-      const user = await ctx.db.query.users.findFirst({
-        where: eq(users.id, input.id),
-      });
+      const user = await ctx.db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          createdAt: users.createdAt,
+          updatedAt: users.updatedAt,
+        })
+        .from(users)
+        .where(eq(users.id, input.id));
 
-      if (!user) {
-        return null;
-      }
-
-      const { password, ...rest } = user;
-
-      return rest;
+      return user ?? null;
     }),
 });

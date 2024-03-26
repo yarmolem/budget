@@ -11,7 +11,6 @@ import {
 import { Input } from "../ui/input";
 import { DataTable } from "./data-table";
 import {
-  Card,
   CardTitle,
   CardFooter,
   CardHeader,
