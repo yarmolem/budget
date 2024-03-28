@@ -1,13 +1,15 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import { PieChart, type LucideProps, List, Euro, Tag } from "lucide-react";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+
+import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { signOut } from "next-auth/react";
 import { useTranslation } from "@/hooks/use-translation";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { useMemo } from "react";
 
 export interface NavItem {
   title: string;
@@ -20,30 +22,33 @@ export interface NavItem {
 
 export default function Sidebar() {
   const path = usePathname();
-  const { t } = useTranslation("sidebar");
+  const { t, lng } = useTranslation("sidebar");
 
-  const items: NavItem[] = [
-    {
-      href: "/",
-      icon: PieChart,
-      title: t("dashboard"),
-    },
-    {
-      icon: List,
-      href: "/categories",
-      title: t("categories"),
-    },
-    {
-      icon: Euro,
-      href: "/transactions",
-      title: t("transactions"),
-    },
-    {
-      icon: Tag,
-      href: "/tags",
-      title: t("tags"),
-    },
-  ];
+  const items: NavItem[] = useMemo(
+    () => [
+      {
+        href: "/",
+        icon: PieChart,
+        title: t("dashboard"),
+      },
+      {
+        icon: List,
+        href: "/categories",
+        title: t("categories"),
+      },
+      {
+        icon: Euro,
+        href: "/transactions",
+        title: t("transactions"),
+      },
+      {
+        icon: Tag,
+        href: "/tags",
+        title: t("tags"),
+      },
+    ],
+    [],
+  );
 
   return (
     <aside className="h-screen w-64 py-3 pl-3">
@@ -63,7 +68,9 @@ export default function Sidebar() {
                     <span
                       className={cn(
                         "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-                        path === item.href ? "bg-secondary" : "transparent",
+                        path === `/${lng}${item.href === "/" ? "" : item.href}`
+                          ? "bg-secondary"
+                          : "transparent",
                         item.disabled && "cursor-not-allowed opacity-80",
                       )}
                     >

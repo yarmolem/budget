@@ -19,5 +19,6 @@
   "amount": "Cantidad",
   "date": "Fecha",
   "method": "Método",
-  "transaction_type": "Tipo de transacción"
+  "transaction_type": "Tipo de transacción",
+  "home": "Inicio"
 }

@@ -158,7 +158,10 @@ const TransactionsPage = () => {
     <>
       <PageDataTable<ITransaction>
         title={t("transactions-page:transactions")}
-        description={t("transactions-page:manage_your_transactions")}
+        breadcrumb={[
+          { id: "1", href: "/", title: t("common:home") },
+          { id: "2", title: t("transactions-page:transactions") },
+        ]}
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}

@@ -142,7 +142,10 @@ const CategoriesPage = () => {
     <>
       <PageDataTable<Category>
         title={t("categories-page:categories")}
-        description={t("categories-page:manage_your_categories")}
+        breadcrumb={[
+          { id: "1", href: "/", title: t("common:home") },
+          { id: "2", title: t("categories-page:categories") },
+        ]}
         data={data?.data ?? []}
         columns={columns}
         isLoading={isLoading}

@@ -9,5 +9,10 @@ export const useTranslation = (ns?: Namespace | Namespace[]) => {
     throw new Error("Missing language context");
   }
 
-  return useClientTranslation(lng, ns);
+  const translation = useClientTranslation(lng, ns);
+
+  return {
+    ...translation,
+    lng,
+  };
 };

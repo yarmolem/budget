@@ -18,5 +18,6 @@
   "amount": "Amount",
   "date": "Date",
   "method": "Method",
-  "transaction_type": "Transaction type"
+  "transaction_type": "Transaction type",
+  "home": "Home"
 }

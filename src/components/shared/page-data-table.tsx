@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import ReactPaginate from "react-paginate";
 import {
   PlusIcon,
@@ -10,26 +10,35 @@ import {
 
 import { Input } from "../ui/input";
 import { DataTable } from "./data-table";
+import { CardTitle, CardFooter, CardHeader, CardContent } from "../ui/card";
 import {
-  CardTitle,
-  CardFooter,
-  CardHeader,
-  CardContent,
-  CardDescription,
-} from "../ui/card";
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "../ui/breadcrumb";
 
 import { Button, buttonVariants } from "../ui/button";
 
 import type { ColumnDef } from "@tanstack/react-table";
 import { useTranslation } from "@/hooks/use-translation";
 
+type BreadcrumbOptions = {
+  id: string;
+  href?: string;
+  title: string;
+};
+
 type Props<T extends object> = {
   data: T[];
   title: string;
-  description: string;
+  description?: string;
   isLoading?: boolean;
   columns: ColumnDef<T>[];
   pageCount: number;
+  breadcrumb?: BreadcrumbOptions[];
   onAdd?: () => void;
   onChangeText?: (value: string) => void;
   onPageChange?: (selected: number) => void;
@@ -45,7 +54,32 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
       <div className="flex h-full w-full flex-1 flex-col">
         <CardHeader className="space-y-2">
           <CardTitle>{props.title}</CardTitle>
-          <CardDescription>{props.description}</CardDescription>
+          {props.breadcrumb && (
+            <Breadcrumb>
+              <BreadcrumbList>
+                {props.breadcrumb?.map((item) => {
+                  if (item.href) {
+                    return (
+                      <Fragment key={item.id}>
+                        <BreadcrumbItem>
+                          <BreadcrumbLink href={item.href}>
+                            {item.title}
+                          </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                      </Fragment>
+                    );
+                  }
+
+                  return (
+                    <BreadcrumbItem key={item.id}>
+                      <BreadcrumbPage>{item.title}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  );
+                })}
+              </BreadcrumbList>
+            </Breadcrumb>
+          )}
         </CardHeader>
 
         <CardContent className="flex flex-row justify-between">
