@@ -144,8 +144,8 @@ const CategoryModal = (props: Props) => {
       onClose={props.onClose}
       title={
         isEdit
-          ? t("category-page:update_category")
-          : t("category-page:create_category")
+          ? t("categories-page:update_category")
+          : t("categories-page:create_category")
       }
     >
       <Form {...form}>
@@ -161,7 +161,7 @@ const CategoryModal = (props: Props) => {
                 <FormLabel>{t("common:title")}</FormLabel>
                 <FormControl>
                   <Input
-                    placeholder={t("category-page:enter_title")}
+                    placeholder={t("categories-page:enter_title")}
                     {...field}
                   />
                 </FormControl>
@@ -196,7 +196,7 @@ const CategoryModal = (props: Props) => {
                   <Checkbox
                     checked={field.value}
                     onBlur={field.onBlur}
-                    onChange={field.onChange}
+                    onCheckedChange={field.onChange}
                   />
                 </FormControl>
                 <FormLabel>{t("categories-page:is_income")}</FormLabel>

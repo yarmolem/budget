@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
 
-import Sidebar from "@/components/layout/sidebar";
+import { Logo } from "@/components/shared/logo";
 import { getServerAuthSession } from "@/server/auth";
-import ToggleTheme from "@/components/shared/toggle-theme";
+import { ToggleTheme } from "@/components/shared/toggle-theme";
+import { SidebarMobile } from "@/components/layout/sidebar-mobile";
+import { SidebarDesktop } from "@/components/layout/sidebar-desktop";
 
 export default async function DashboardLayout({
   children,
@@ -17,9 +19,13 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen w-full">
-      <Sidebar />
+      <SidebarDesktop />
       <main className="flex h-screen w-full flex-col overflow-y-auto px-4 py-3">
-        <nav className="mb-4 px-6 py-2">
+        <nav className="mb-4 flex items-center justify-between py-2 md:px-6">
+          <SidebarMobile />
+
+          <Logo />
+
           <div className="flex">
             <ToggleTheme className="ml-auto" />
           </div>

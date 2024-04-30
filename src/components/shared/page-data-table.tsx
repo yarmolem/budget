@@ -52,7 +52,7 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
   return (
     <>
       <div className="flex h-full w-full flex-1 flex-col">
-        <CardHeader className="space-y-2">
+        <CardHeader className="space-y-2 px-0 md:px-6">
           <CardTitle>{props.title}</CardTitle>
           {props.breadcrumb && (
             <Breadcrumb>
@@ -82,9 +82,9 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
           )}
         </CardHeader>
 
-        <CardContent className="flex flex-row justify-between">
+        <CardContent className="flex flex-col justify-between space-y-3 px-0 md:flex-row md:space-y-0 md:px-6">
           <Input
-            className="w-72"
+            className="w-full md:max-w-72"
             placeholder={t("placeholder_search")}
             leftIcon={<SearchIcon className="w-5" />}
             defaultValue=""
@@ -97,7 +97,7 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
           </Button>
         </CardContent>
 
-        <CardContent className="flex-1">
+        <CardContent className="flex-1 px-0 md:px-6">
           <DataTable
             data={props.data}
             columns={props.columns}
@@ -105,7 +105,7 @@ const PageDataTable = <T extends object>(props: Props<T>) => {
           />
         </CardContent>
 
-        <CardFooter className="flex">
+        <CardFooter className="flex px-0 md:px-6">
           <ReactPaginate
             onPageChange={(select) => {
               props.onPageChange?.(select.selected + 1);

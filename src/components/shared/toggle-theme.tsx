@@ -1,10 +1,11 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import React from "react";
-import { Button } from "../ui/button";
+import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+
 import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 type Props = {
   className?: string;
@@ -27,4 +28,4 @@ const ToggleTheme = (props: Props) => {
   );
 };
 
-export default ToggleTheme;
+export { ToggleTheme };

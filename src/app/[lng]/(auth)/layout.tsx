@@ -1,6 +1,7 @@
-import ToggleTheme from "@/components/shared/toggle-theme";
-import { getServerAuthSession } from "@/server/auth";
 import { redirect } from "next/navigation";
+
+import { getServerAuthSession } from "@/server/auth";
+import { ToggleTheme } from "@/components/shared/toggle-theme";
 
 export default async function AuthLayout({
   children,

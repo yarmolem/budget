@@ -16,5 +16,6 @@
   "select_type": "Selecciona un tipo",
   "select_method": "Selecciona un método",
   "select_tags": "Selecciona etiquetas",
+  "select_category": "Selecciona una categoria",
   "sure_delete_transaction": "Estás seguro que deseas eliminar esta transacción?"
 }
