@@ -57,6 +57,8 @@ const SignInPage = () => {
         redirect: false,
       });
 
+      console.log({ res });
+
       if (!res?.ok && res?.error) {
         throw new Error(res.error);
       }

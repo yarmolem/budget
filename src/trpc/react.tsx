@@ -5,8 +5,13 @@ import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
 import { useState } from "react";
 import SuperJSON from "superjson";
+import dayjs from "dayjs";
+
+import "dayjs/locale/en";
+import "dayjs/locale/es";
 
 import { type AppRouter } from "@/server/api/root";
+import { useLanguageCtx } from "@/components/providers";
 
 const createQueryClient = () => new QueryClient();
 
@@ -23,10 +28,13 @@ const getQueryClient = () => {
 export const api = createTRPCReact<AppRouter>();
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
+  const { lng } = useLanguageCtx();
   const queryClient = getQueryClient();
 
-  const [trpcClient] = useState(() =>
-    api.createClient({
+  const [trpcClient] = useState(() => {
+    dayjs.locale(lng);
+
+    return api.createClient({
       links: [
         loggerLink({
           enabled: (op) =>
@@ -38,13 +46,14 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
           url: getBaseUrl() + "/api/trpc",
           headers: () => {
             const headers = new Headers();
+            headers.set("Accept-Language", lng);
             headers.set("x-trpc-source", "nextjs-react");
             return headers;
           },
         }),
       ],
-    })
-  );
+    });
+  });
 
   return (
     <QueryClientProvider client={queryClient}>

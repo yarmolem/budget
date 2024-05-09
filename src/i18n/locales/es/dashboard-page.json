@@ -1,4 +1,5 @@
 {
+  "balance": "Balance",
   "total_income": "Total ingresos",
   "total_expense": "Total gastos",
   "most_expensive_category": "Categoría con mas gasto",

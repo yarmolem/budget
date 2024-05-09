@@ -191,59 +191,23 @@ export const transactionsRouter = createTRPCRouter({
       },
     });
 
-    const currentMonthTransactions = data.filter(({ date }) => {
-      return dayjs(date).month() === dayjs().month();
-    });
+    const currentMonthIncome = data.reduce((acc, transaction) => {
+      if (transaction.type === EnumTransaccionType.INCOME) {
+        return acc + transaction.amount;
+      }
 
-    const previousMonthTransactions = data.filter(({ date }) => {
-      return dayjs(date).month() === dayjs().subtract(1, "month").month();
-    });
+      return acc;
+    }, 0);
 
-    const currentMonthIncome = currentMonthTransactions.reduce(
-      (acc, transaction) => {
-        if (transaction.type === EnumTransaccionType.INCOME) {
-          return acc + transaction.amount;
-        }
+    const currentMonthExpenses = data.reduce((acc, transaction) => {
+      if (transaction.type === EnumTransaccionType.EXPENSE) {
+        return acc + transaction.amount;
+      }
 
-        return acc;
-      },
-      0,
-    );
+      return acc;
+    }, 0);
 
-    const currentMonthExpenses = currentMonthTransactions.reduce(
-      (acc, transaction) => {
-        if (transaction.type === EnumTransaccionType.EXPENSE) {
-          return acc + transaction.amount;
-        }
-
-        return acc;
-      },
-      0,
-    );
-
-    const previousMonthIncome = previousMonthTransactions.reduce(
-      (acc, transaction) => {
-        if (transaction.type === EnumTransaccionType.INCOME) {
-          return acc + transaction.amount;
-        }
-
-        return acc;
-      },
-      0,
-    );
-
-    const previousMonthExpenses = previousMonthTransactions.reduce(
-      (acc, transaction) => {
-        if (transaction.type === EnumTransaccionType.EXPENSE) {
-          return acc + transaction.amount;
-        }
-
-        return acc;
-      },
-      0,
-    );
-
-    const recordCategoryExpenses = currentMonthTransactions.reduce(
+    const recordCategoryExpenses = data.reduce(
       (acc, transaction) => {
         if (transaction.type === EnumTransaccionType.EXPENSE) {
           if (!acc?.[transaction.categoryId]) {
@@ -275,20 +239,10 @@ export const transactionsRouter = createTRPCRouter({
       { categoryId: "", title: "", amount: 0 },
     );
 
-    const percentageIncomeDifference =
-      (currentMonthIncome - previousMonthIncome * 100) /
-      (previousMonthIncome === 0 ? 1 : previousMonthIncome);
-
-    const percentageExpensesDifference =
-      (currentMonthExpenses - previousMonthExpenses * 100) /
-      (previousMonthExpenses === 0 ? 1 : previousMonthExpenses);
-
     return {
       totalIncome: currentMonthIncome,
       totalExpenses: currentMonthExpenses,
       mostExpensiveCategory,
-      percentageIncomeDifference,
-      percentageExpensesDifference,
     };
   }),
   getTransactionsHistory: protectedProcedure
