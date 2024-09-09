@@ -1,69 +1,62 @@
 import { z } from "zod";
-import { and, desc, eq, like, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
 
 import { categories } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  getSort,
+  getWhere,
+  getPageCount,
+  getPagination,
+  paginationInput,
+  stringFilterInput,
+  booleanFilterInput,
+  dateFilterInput,
+} from "../utils";
+
+const categoriesFilters = z
+  .object({
+    id: stringFilterInput,
+    title: stringFilterInput,
+    color: stringFilterInput,
+    authorId: stringFilterInput,
+    isIncome: booleanFilterInput,
+    createdAt: dateFilterInput,
+    updatedAt: dateFilterInput,
+  })
+  .optional();
+
+const getAllInput = z
+  .object({
+    sort: z.string().optional(),
+    search: z.string().optional(),
+    filters: categoriesFilters,
+    pagination: paginationInput,
+  })
+  .optional();
 
 export const categoriesRouter = createTRPCRouter({
   getAll: protectedProcedure
-    .input(
-      z
-        .object({
-          search: z.string().optional(),
-          pagination: z
-            .object({
-              page: z.number().default(1),
-              pageSize: z.number().default(10),
-            })
-            .optional(),
-
-          filters: z
-            .object({
-              title: z.string().optional(),
-              color: z.string().optional(),
-              isIncome: z.boolean().optional(),
-            })
-            .optional(),
-        })
-        .optional(),
-    )
+    .input(getAllInput)
     .query(async ({ ctx, input }) => {
-      const where = and(
-        eq(categories.authorId, ctx.session.user.id),
-        input?.search && input?.search?.trim().length !== 0
-          ? like(categories.title, `%${input?.search}%`)
-          : undefined,
-        input?.filters?.title
-          ? eq(categories.title, input.filters.title)
-          : undefined,
-        input?.filters?.color
-          ? eq(categories.color, input.filters.color)
-          : undefined,
-        input?.filters?.isIncome
-          ? eq(categories.isIncome, input.filters.isIncome)
-          : undefined,
-      );
-
       const data = await ctx.db.query.categories.findMany({
-        where,
-        orderBy: desc(categories.createdAt),
-        limit: input?.pagination?.pageSize,
-        offset:
-          ((input?.pagination?.page ?? 1) - 1) *
-          (input?.pagination?.pageSize ?? 10),
+        orderBy: getSort(input?.sort),
+        where: getWhere(input?.filters),
+        ...getPagination(input?.pagination),
       });
 
-      const count = await ctx.db
-        .select({ count: sql<number>`COUNT(*)` })
-        .from(categories)
-        .where(where);
+      const count = await ctx.db.query.categories.findFirst({
+        where: getWhere(input?.filters),
+        extras: { count: sql<number>`COUNT(*)`.as("count") },
+      });
 
       return {
         data,
         meta: {
-          pageCount: Math.ceil(
-            (count?.[0]?.count ?? 0) / (input?.pagination?.pageSize ?? 10),
+          pageCount: getPageCount(
+            count?.count ?? 0,
+            input?.pagination?.pageSize,
           ),
         },
       };

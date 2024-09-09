@@ -47,7 +47,8 @@ const CategoriesPage = () => {
 
   const { data, isLoading, refetch } = api.categories.getAll.useQuery({
     pagination,
-    search: text,
+    sort: "createdAt:desc",
+    filters: { title: { contains: text } },
   });
 
   const handleDelete = (id: string) => {

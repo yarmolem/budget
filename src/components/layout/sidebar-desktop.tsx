@@ -8,6 +8,7 @@ import { Button } from "../ui/button";
 import { SidebarContent } from "../shared/sidebar-content";
 import { useTranslation } from "@/hooks/use-translation";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import LanguageSwitcher from "../shared/language-switcher";
 
 export interface SidebarProps {
   className?: string;
@@ -28,7 +29,8 @@ export function SidebarDesktop(props: SidebarProps) {
           <SidebarContent />
         </CardContent>
 
-        <CardFooter className="mt-auto p-3">
+        <CardFooter className="mt-auto flex-col space-y-3 p-3">
+          <LanguageSwitcher />
           <Button
             className="w-full"
             variant="destructive"

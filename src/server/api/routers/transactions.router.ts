@@ -1,7 +1,7 @@
 import { z } from "zod";
 import dayjs from "dayjs";
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, like, sql, gte, lte } from "drizzle-orm";
+import { and, eq, sql, gte, lte } from "drizzle-orm";
 
 import { transactions, tagsOnTransactions } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
@@ -10,37 +10,48 @@ import {
   EnumTransaccionType,
   EnumTransaccionMethod,
 } from "@/interface";
+import {
+  getSort,
+  getWhere,
+  getPageCount,
+  getPagination,
+  paginationInput,
+  stringFilterInput,
+  numberFilterInput,
+  dateFilterInput,
+} from "../utils";
+
+const transactionsFilters = z
+  .object({
+    id: stringFilterInput,
+    amount: numberFilterInput,
+    description: stringFilterInput,
+    authorId: stringFilterInput,
+    categoryId: stringFilterInput,
+    type: stringFilterInput,
+    method: stringFilterInput,
+    date: dateFilterInput,
+    createdAt: dateFilterInput,
+    updatedAt: dateFilterInput,
+  })
+  .optional();
+
+const getAllInput = z
+  .object({
+    sort: z.string().optional(),
+    search: z.string().optional(),
+    filters: transactionsFilters,
+    pagination: paginationInput,
+  })
+  .optional();
 
 export const transactionsRouter = createTRPCRouter({
   getAll: protectedProcedure
-    .input(
-      z
-        .object({
-          search: z.string().optional(),
-          pagination: z
-            .object({
-              page: z.number().default(1),
-              pageSize: z.number().default(10),
-            })
-            .optional(),
-        })
-        .optional(),
-    )
+    .input(getAllInput)
     .query(async ({ ctx, input }) => {
-      const where = and(
-        eq(transactions.authorId, ctx.session.user.id),
-        input?.search && input?.search?.trim().length !== 0
-          ? like(transactions.description, `%${input?.search}%`)
-          : undefined,
-      );
-
       const data = await ctx.db.query.transactions.findMany({
-        where,
-        orderBy: desc(transactions.createdAt),
-        limit: input?.pagination?.pageSize,
-        offset:
-          ((input?.pagination?.page ?? 1) - 1) *
-          (input?.pagination?.pageSize ?? 10),
+        orderBy: getSort(input?.sort),
+        where: getWhere(input?.filters),
         with: {
           category: true,
           tags: {
@@ -53,19 +64,18 @@ export const transactionsRouter = createTRPCRouter({
             },
           },
         },
+        ...getPagination(input?.pagination),
       });
 
-      const count = await ctx.db
-        .select({ count: sql<number>`COUNT(*)` })
-        .from(transactions)
-        .where(where);
+      const count = await ctx.db.query.transactions.findFirst({
+        where: getWhere(input?.filters),
+        extras: { count: sql<number>`COUNT(*)`.as("count") },
+      });
 
       return {
         data,
         meta: {
-          pageCount: Math.ceil(
-            (count?.[0]?.count ?? 0) / (input?.pagination?.pageSize ?? 10),
-          ),
+          pageCount: getPageCount(count?.count, input?.pagination?.pageSize),
         },
       };
     }),

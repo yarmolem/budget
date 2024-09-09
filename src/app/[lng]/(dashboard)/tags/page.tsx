@@ -39,7 +39,8 @@ const TagsPage = () => {
 
   const { data, isLoading, refetch } = api.tags.getAll.useQuery({
     pagination,
-    search: text,
+    sort: "createdAt:desc",
+    filters: { title: { contains: text } },
   });
 
   const handleDelete = (id: string) => {

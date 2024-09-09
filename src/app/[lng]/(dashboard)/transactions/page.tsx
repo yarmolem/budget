@@ -6,8 +6,9 @@ import { Edit2Icon, MoreHorizontal, Trash2Icon } from "lucide-react";
 import React, { useMemo, useState } from "react";
 import { useDebounceCallback } from "usehooks-ts";
 
-import TransactionsModal from "./transaction-modal";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TransactionsModal } from "./transaction-modal";
 import { BasicModal } from "@/components/ui/basic-modal";
 import PageDataTable from "@/components/shared/page-data-table";
 import {
@@ -22,11 +23,11 @@ import useToggle from "@/hooks/use-toggle";
 import { currencyUtils } from "@/lib/utils";
 import { usePagination } from "@/hooks/use-pagination";
 
-import type { ColumnDef } from "@tanstack/react-table";
-import { type ICategory, type ITransaction } from "@/server/db/schema";
-import { Badge } from "@/components/ui/badge";
 import { EnumTransaccionType } from "@/interface";
 import { useTranslation } from "@/hooks/use-translation";
+
+import type { ColumnDef } from "@tanstack/react-table";
+import type { ICategory, ITransaction } from "@/server/db/schema";
 
 const TransactionsPage = () => {
   const { t } = useTranslation(["common", "transactions-page"]);
@@ -42,7 +43,8 @@ const TransactionsPage = () => {
 
   const { data, isLoading, refetch } = api.transactions.getAll.useQuery({
     pagination,
-    search: text,
+    sort: "date:desc",
+    filters: { description: { contains: text } },
   });
 
   const handleDelete = (id: string) => {
@@ -84,7 +86,7 @@ const TransactionsPage = () => {
         accessorKey: "category",
         header: () => <p className="text-center">{t("common:category")}</p>,
         cell: ({ cell }) => (
-          <p className="text-center">{(cell.getValue() as ICategory).title}</p>
+          <p className="text-center">{(cell.getValue() as ICategory)?.title}</p>
         ),
       },
       {

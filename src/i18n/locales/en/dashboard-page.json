@@ -4,6 +4,7 @@
   "total_expense": "Total expenses",
   "most_expensive_category": "Most expensive category",
   "transactions": "Transactions",
+  "categories": "Categories",
   "expense_history": "Expense history",
   "recent_transactions": "Recent transactions",
   "from_last_month": "from last month"

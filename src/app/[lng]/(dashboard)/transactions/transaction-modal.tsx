@@ -41,9 +41,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/hooks/use-translation";
 import { SelectMultiple } from "@/components/ui/select-multiple";
 import { EnumTransaccionMethod, EnumTransaccionType } from "@/interface";
-import { useTranslation } from "@/hooks/use-translation";
 
 type Props = {
   isOpen: boolean;
@@ -431,4 +431,4 @@ const TransactionsModal = (props: Props) => {
   );
 };
 
-export default TransactionsModal;
+export { TransactionsModal };

@@ -27,6 +27,9 @@ export function DateRangePicker({
 }: DateRangePickerProps) {
   const [date, setDate] = useState<DateRange | undefined>(undefined);
 
+  const _value = value ?? date;
+  const _onChange = onChange ?? setDate;
+
   return (
     <div className={cn("grid w-full gap-2", className)}>
       <Popover>
@@ -40,13 +43,13 @@ export function DateRangePicker({
             )}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
-            {date?.from ? (
-              date.to ? (
-                dayjs(date.from).format("MMM DD, YYYY") +
+            {_value?.from ? (
+              _value.to ? (
+                dayjs(_value.from).format("MMM DD, YYYY") +
                 " - " +
-                dayjs(date.to).format("MMM DD, YYYY")
+                dayjs(_value.to).format("MMM DD, YYYY")
               ) : (
-                dayjs(date.from).format("MMM DD, YYYY")
+                dayjs(_value.from).format("MMM DD, YYYY")
               )
             ) : (
               <span>Pick a date</span>
@@ -58,8 +61,8 @@ export function DateRangePicker({
             initialFocus
             mode="range"
             numberOfMonths={2}
-            selected={value ?? date}
-            onSelect={onChange ?? setDate}
+            selected={_value}
+            onSelect={_onChange}
             defaultMonth={value?.from ?? date?.from}
           />
         </PopoverContent>

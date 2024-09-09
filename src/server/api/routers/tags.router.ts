@@ -1,52 +1,59 @@
 import { z } from "zod";
-import { and, desc, eq, like, sql } from "drizzle-orm";
 import { randomUUID } from "node:crypto";
+import { and, eq, sql } from "drizzle-orm";
 
 import { tags } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import {
+  getSort,
+  getWhere,
+  getPageCount,
+  getPagination,
+  paginationInput,
+  stringFilterInput,
+  dateFilterInput,
+} from "../utils";
+
+const tagsFilters = z
+  .object({
+    id: stringFilterInput,
+    title: stringFilterInput,
+    authorId: stringFilterInput,
+    createdAt: dateFilterInput,
+    updatedAt: dateFilterInput,
+  })
+  .optional();
+
+const getAllInput = z
+  .object({
+    sort: z.string().optional(),
+    search: z.string().optional(),
+    filters: tagsFilters,
+    pagination: paginationInput,
+  })
+  .optional();
 
 export const tagsRouter = createTRPCRouter({
   getAll: protectedProcedure
-    .input(
-      z
-        .object({
-          search: z.string().optional(),
-          pagination: z
-            .object({
-              page: z.number().default(1),
-              pageSize: z.number().default(10),
-            })
-            .optional(),
-        })
-        .optional(),
-    )
+    .input(getAllInput)
     .query(async ({ ctx, input }) => {
-      const where = and(
-        eq(tags.authorId, ctx.session.user.id),
-        input?.search && input?.search?.trim().length !== 0
-          ? like(tags.title, `%${input?.search}%`)
-          : undefined,
-      );
-
       const data = await ctx.db.query.tags.findMany({
-        where,
-        orderBy: desc(tags.createdAt),
-        limit: input?.pagination?.pageSize,
-        offset:
-          ((input?.pagination?.page ?? 1) - 1) *
-          (input?.pagination?.pageSize ?? 10),
+        orderBy: getSort(input?.sort),
+        where: getWhere(input?.filters),
+        ...getPagination(input?.pagination),
       });
 
-      const count = await ctx.db
-        .select({ count: sql<number>`COUNT(*)` })
-        .from(tags)
-        .where(where);
+      const count = await ctx.db.query.tags.findFirst({
+        where: getWhere(input?.filters),
+        extras: { count: sql<number>`COUNT(*)`.as("count") },
+      });
 
       return {
         data,
         meta: {
-          pageCount: Math.ceil(
-            (count?.[0]?.count ?? 0) / (input?.pagination?.pageSize ?? 10),
+          pageCount: getPageCount(
+            count?.count ?? 0,
+            input?.pagination?.pageSize,
           ),
         },
       };

@@ -38,11 +38,7 @@ const DashboardExpensesHistory = (props: Props) => {
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data?.data ?? []}
-            margin={{
-              left: 12,
-              right: 44,
-              bottom: 10,
-            }}
+            margin={{ left: 12, right: 44, bottom: 10 }}
             className="[&_.recharts-cartesian-axis-tick-value]:fill-gray-500 rtl:[&_.recharts-cartesian-axis.yAxis]:-translate-x-12 [&_.recharts-cartesian-grid-vertical]:opacity-0"
           >
             <defs>

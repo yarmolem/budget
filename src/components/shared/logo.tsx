@@ -16,8 +16,7 @@ const Logo = (props: Props) => {
         props.className,
       )}
     >
-      {/*  <h1 className="text-center text-2xl font-bold">LOGO</h1> */}
-      <Image src="/assets/logo.png" alt="logo" width={100} height={100} />
+      <Image src="/assets/imagotipo.svg" alt="logo" width={180} height={180} />
     </Link>
   );
 };

@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "../ui/sheet";
 import { useState } from "react";
+import LanguageSwitcher from "../shared/language-switcher";
 
 interface SidebarProps {
   className?: string;
@@ -36,7 +37,7 @@ export function SidebarMobile(_props: SidebarProps) {
           <Logo />
         </SheetHeader>
         <SidebarContent onClose={() => setShow(false)} />
-        <SheetFooter className="mt-auto">
+        <SheetFooter className="mt-auto gap-y-3">
           <Button
             className="w-full"
             variant="destructive"
@@ -44,6 +45,8 @@ export function SidebarMobile(_props: SidebarProps) {
           >
             {t("logout")}
           </Button>
+
+          <LanguageSwitcher />
         </SheetFooter>
       </SheetContent>
     </Sheet>
