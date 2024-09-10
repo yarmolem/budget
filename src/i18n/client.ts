@@ -27,7 +27,7 @@ void i18next
   .use(LanguageDetector)
   .use(
     resourcesToBackend(async (language: string, namespace: string) => {
-      return import(`public/locales/${language}/${namespace}.json`);
+      return import(`./locales/${language}/${namespace}.json`);
     }),
   )
   .init({

@@ -1,9 +1,8 @@
 "use client";
 
-import { createChart, ColorType, TimeChartOptions } from "lightweight-charts";
+import { createChart, ColorType } from "lightweight-charts";
 import React, { useEffect, useRef } from "react";
 import { useLanguageCtx } from "../providers";
-import { currencyUtils } from "@/lib/utils";
 
 interface ChartProps {
   data: { time: string; value: number }[];

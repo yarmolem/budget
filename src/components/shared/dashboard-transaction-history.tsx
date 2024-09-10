@@ -53,12 +53,12 @@ const DashboardTransactionHistory = (props: Props) => {
 
       if (item.type === EnumTransaccionType.INCOME) {
         record[key] = {
-          ...record[key]!,
+          ...record[key],
           income: (record?.[key]?.income ?? 0) + item.amount,
         };
       } else {
         record[key] = {
-          ...record[key]!,
+          ...record[key],
           expense: (record?.[key]?.expense ?? 0) + item.amount,
         };
       }

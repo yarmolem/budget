@@ -21,11 +21,11 @@ interface DashboardCategoriesProps {
   { name: "Group D", value: 200 },
 ]; */
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+/* const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]; */
 
-const RADIAN = Math.PI / 180;
+/* const RADIAN = Math.PI / 180; */
 
-interface CustomizedLabelProps {
+/* interface CustomizedLabelProps {
   cx: number;
   cy: number;
   index: number;
@@ -33,9 +33,9 @@ interface CustomizedLabelProps {
   midAngle: number;
   innerRadius: number;
   outerRadius: number;
-}
+} */
 
-const CustomizedLabel = ({
+/* const CustomizedLabel = ({
   cx,
   cy,
   percent,
@@ -58,7 +58,7 @@ const CustomizedLabel = ({
       {`${(percent * 100).toFixed(0)}%`}
     </text>
   );
-};
+}; */
 
 export function DashboardCategories(props: DashboardCategoriesProps) {
   const { t } = useTranslation("dashboard-page");

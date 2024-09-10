@@ -281,7 +281,7 @@ export const transactionsRouter = createTRPCRouter({
               acc[date] = { income: 0, expense: 0 };
             }
 
-            const item = acc[date]!;
+            const item = acc[date];
 
             acc[date] = {
               income:
@@ -352,7 +352,7 @@ export const transactionsRouter = createTRPCRouter({
               };
             }
 
-            const item = acc[date]!;
+            const item = acc[date];
 
             acc[date] = {
               income:
