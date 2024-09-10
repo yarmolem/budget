@@ -10,7 +10,8 @@
     "db:migrate": "drizzle-kit generate:sqlite",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "vercel-build": "npm rebuild argon2 --build-from-source"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.7.0",
@@ -32,7 +33,7 @@
     "@trpc/react-query": "next",
     "@trpc/server": "next",
     "accept-language": "^3.0.18",
-    "argon2": "^0.40.1",
+    "argon2": "^0.41.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "currency.js": "^2.0.4",
