@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 import SuperJSON from 'superjson'
-import { httpLink } from '@trpc/react-query'
+import { httpBatchLink } from '@trpc/react-query'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-import { makeQueryClient } from '@/lib/query-client'
 import { trpc } from '@/trpc/client'
+import { makeQueryClient } from '@/lib/query-client'
 
 let clientQueryClientSingleton: QueryClient
 
@@ -38,7 +38,7 @@ export function TRPCProvider(
   const [trpcClient] = useState(() => {
     return trpc.createClient({
       links: [
-        httpLink({
+        httpBatchLink({
           url: getUrl(),
           methodOverride: 'POST',
           transformer: SuperJSON,
