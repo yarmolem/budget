@@ -1,8 +1,7 @@
-import { db } from '@/server/db'
-import { publicProcedure, router } from '../trpc'
+import { protectedProcedure, createTRPCRouter } from '../trpc'
 
-export const usersRouter = router({
-  getAll: publicProcedure.query(async () => {
-    return await db.query.users.findMany()
+export const usersRouter = createTRPCRouter({
+  getAll: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.query.user.findMany()
   })
 })

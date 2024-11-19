@@ -1,13 +1,19 @@
 import './globals.css'
 
-import { Nunito_Sans } from 'next/font/google'
+import { Montserrat, Poppins } from 'next/font/google'
 import type { Metadata } from 'next'
 
 import { Providers } from '@/components/providers'
 
-const inter = Nunito_Sans({
+const heading = Montserrat({
   subsets: ['latin'],
-  variable: '--font-sans'
+  variable: '--font-heading'
+})
+
+const body = Poppins({
+  subsets: ['latin'],
+  variable: '--font-body',
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900']
 })
 
 export const metadata: Metadata = {
@@ -15,14 +21,14 @@ export const metadata: Metadata = {
   description: 'Budget App'
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children
 }: Readonly<{
   children: React.ReactNode
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`}>
+      <body className={`${heading.variable} ${body.variable} antialiased`}>
         <Providers>{children}</Providers>
       </body>
     </html>

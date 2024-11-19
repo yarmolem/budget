@@ -9,7 +9,6 @@ export function UserList() {
     <>
       {data?.map((user) => (
         <div key={user.id}>
-          <p>{user.age}</p>
           <p>{user.name}</p>
           <p>{user.email}</p>
         </div>
