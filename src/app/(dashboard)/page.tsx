@@ -7,7 +7,6 @@ import { useMutation } from '@tanstack/react-query'
 
 import { signOut } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
-import { UserList } from '@/components/shared/user-list'
 
 export default function DashboardPage() {
   const router = useRouter()
@@ -18,8 +17,6 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <UserList />
-
       <Button
         isLoading={isPending}
         onClick={() =>

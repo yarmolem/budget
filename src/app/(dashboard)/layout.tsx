@@ -1,5 +1,8 @@
 import { redirect } from 'next/navigation'
+
 import { getIsLoggedIn } from '@/lib/ssr'
+import { DashboardSidebar } from '@/components/layout/dashboard-sidebar'
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 
 export default async function DashboardLayout({
   children
@@ -10,5 +13,13 @@ export default async function DashboardLayout({
 
   if (!isLoggedIn) redirect('/sign-in')
 
-  return <div className="flex h-screen w-full">{children}</div>
+  return (
+    <SidebarProvider>
+      <DashboardSidebar />
+      <main>
+        <SidebarTrigger />
+        {children}
+      </main>
+    </SidebarProvider>
+  )
 }
