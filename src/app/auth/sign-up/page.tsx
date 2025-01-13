@@ -4,8 +4,8 @@ import z from 'zod'
 import Link from 'next/link'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
@@ -27,29 +27,45 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { InputSecure } from '@/components/ui/input-secure'
 
-import { signIn } from '@/lib/auth-client'
+import { signUp } from '@/lib/auth-client'
 
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1)
-})
+const formSchema = z
+  .object({
+    name: z.string().min(1),
+    email: z.string().email(),
+    password: z.string().min(1),
+    confirmPassword: z.string().min(1)
+  })
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password !== confirmPassword) {
+      ctx.addIssue({
+        path: ['confirmPassword'],
+        code: 'custom',
+        message: 'Passwords do not match'
+      })
+    }
+  })
 
 type FormValues = z.infer<typeof formSchema>
 
-const SignInPage = () => {
+const SignUpPage = () => {
   const router = useRouter()
+
   const [loading, setLoading] = useState(false)
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       email: '',
-      password: ''
+      password: '',
+      confirmPassword: ''
     }
   })
 
   async function onSubmit(values: FormValues) {
-    await signIn.email(
+    await signUp.email(
       {
+        name: values.name,
         email: values.email,
         password: values.password
       },
@@ -59,12 +75,11 @@ const SignInPage = () => {
         },
         onSuccess: () => {
           setLoading(false)
-          router.replace('/')
+          router.push('/dashboard')
         },
         onError: (error) => {
           setLoading(false)
           toast.error(error.error.message)
-          console.log({ msg: error.error.message })
         }
       }
     )
@@ -73,10 +88,10 @@ const SignInPage = () => {
   return (
     <Card className="w-[90vw] max-w-sm">
       <CardHeader>
-        <CardTitle>Sign in</CardTitle>
+        <CardTitle>Sign up</CardTitle>
 
         <CardDescription>
-          Enter your credentials below to sign in
+          Enter your credentials below to sign up
         </CardDescription>
       </CardHeader>
 
@@ -86,6 +101,19 @@ const SignInPage = () => {
             <div className="space-y-2">
               <FormField
                 control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -93,7 +121,7 @@ const SignInPage = () => {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="user@gmail.com"
+                        placeholder="jdoe@dev.com"
                         {...field}
                       />
                     </FormControl>
@@ -115,31 +143,32 @@ const SignInPage = () => {
                   </FormItem>
                 )}
               />
+              <FormField
+                name="confirmPassword"
+                control={form.control}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <InputSecure placeholder="*********" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            <Button isLoading={loading} type="submit" className="mt-6 w-full">
-              Sign in
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="mt-6 w-full"
-              onClick={() =>
-                toast.success('Hello', {
-                  duration: 10_000
-                })
-              }
-            >
-              Sign in
+            <Button type="submit" className="mt-6 w-full" isLoading={loading}>
+              Sign up
             </Button>
 
-            <p className="mt-6 text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{' '}
+            <p className="mt-4 text-center text-sm text-muted-foreground">
+              Already have an account?{' '}
               <Link
-                href="/sign-up"
+                href="/auth/sign-in"
                 className="text-primary underline underline-offset-4"
               >
-                Sign up
+                Sign in
               </Link>
             </p>
           </form>
@@ -149,4 +178,4 @@ const SignInPage = () => {
   )
 }
 
-export default SignInPage
+export default SignUpPage

@@ -4,8 +4,8 @@ import z from 'zod'
 import Link from 'next/link'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
@@ -27,45 +27,29 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { InputSecure } from '@/components/ui/input-secure'
 
-import { signUp } from '@/lib/auth-client'
+import { signIn } from '@/lib/auth-client'
 
-const formSchema = z
-  .object({
-    name: z.string().min(1),
-    email: z.string().email(),
-    password: z.string().min(1),
-    confirmPassword: z.string().min(1)
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password !== confirmPassword) {
-      ctx.addIssue({
-        path: ['confirmPassword'],
-        code: 'custom',
-        message: 'Passwords do not match'
-      })
-    }
-  })
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(1)
+})
 
 type FormValues = z.infer<typeof formSchema>
 
-const SignUpPage = () => {
+const SignInPage = () => {
   const router = useRouter()
-
   const [loading, setLoading] = useState(false)
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: ''
+      email: 'cris@dev.com',
+      password: 'Admin123'
     }
   })
 
   async function onSubmit(values: FormValues) {
-    await signUp.email(
+    await signIn.email(
       {
-        name: values.name,
         email: values.email,
         password: values.password
       },
@@ -75,11 +59,12 @@ const SignUpPage = () => {
         },
         onSuccess: () => {
           setLoading(false)
-          router.push('/')
+          router.replace('/dashboard')
         },
         onError: (error) => {
           setLoading(false)
           toast.error(error.error.message)
+          console.log({ msg: error.error.message })
         }
       }
     )
@@ -88,10 +73,10 @@ const SignUpPage = () => {
   return (
     <Card className="w-[90vw] max-w-sm">
       <CardHeader>
-        <CardTitle>Sign up</CardTitle>
+        <CardTitle>Sign in</CardTitle>
 
         <CardDescription>
-          Enter your credentials below to sign up
+          Enter your credentials below to sign in
         </CardDescription>
       </CardHeader>
 
@@ -101,19 +86,6 @@ const SignUpPage = () => {
             <div className="space-y-2">
               <FormField
                 control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
@@ -121,7 +93,7 @@ const SignUpPage = () => {
                     <FormControl>
                       <Input
                         type="email"
-                        placeholder="jdoe@dev.com"
+                        placeholder="user@gmail.com"
                         {...field}
                       />
                     </FormControl>
@@ -143,32 +115,19 @@ const SignUpPage = () => {
                   </FormItem>
                 )}
               />
-              <FormField
-                name="confirmPassword"
-                control={form.control}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Confirm Password</FormLabel>
-                    <FormControl>
-                      <InputSecure placeholder="*********" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
-            <Button type="submit" className="mt-6 w-full" isLoading={loading}>
-              Sign up
+            <Button isLoading={loading} type="submit" className="mt-6 w-full">
+              Sign in
             </Button>
 
-            <p className="mt-4 text-center text-sm text-muted-foreground">
-              Already have an account?{' '}
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              Don&apos;t have an account?{' '}
               <Link
-                href="/sign-in"
+                href="/auth/sign-up"
                 className="text-primary underline underline-offset-4"
               >
-                Sign in
+                Sign up
               </Link>
             </p>
           </form>
@@ -178,4 +137,4 @@ const SignUpPage = () => {
   )
 }
 
-export default SignUpPage
+export default SignInPage

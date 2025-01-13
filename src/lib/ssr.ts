@@ -1,23 +1,36 @@
-import { cookies, headers } from 'next/headers'
+import { auth } from '@/server/auth'
+import {
+  cookies as getCookieStore,
+  headers as getHeaderStore
+} from 'next/headers'
+
 import type { ResponseCookie } from 'next/dist/compiled/@edge-runtime/cookies'
 
-import { auth } from '@/server/auth'
-
 export async function getServerContext() {
-  const cookieStore = await cookies()
-  const headerStore = await headers()
+  const cookieStore = getCookieStore()
+  const headerStore = getHeaderStore()
 
-  const headerRecord = Object.fromEntries(headerStore.entries())
-  const cookieRecord = Object.fromEntries(
-    cookieStore.getAll().map((c) => [c.name, c.value])
-  )
+  const headers = new Headers(headerStore)
+  const cookies = new Map<string, string>()
+
+  for (const cookie of cookieStore.getAll()) {
+    cookies.set(cookie.name, cookie.value)
+  }
+
+  function getAllHeaders() {
+    return headers
+  }
+
+  function getAllCookies() {
+    return Object.fromEntries(Array.from(cookies.entries()))
+  }
 
   function getHeader(key: string) {
-    return headerRecord?.[key] ?? null
+    return headers.get(key) ?? null
   }
 
   function getCookie(key: string) {
-    return cookieRecord?.[key] ?? null
+    return cookies.get(key) ?? null
   }
 
   function setCookie(
@@ -33,8 +46,8 @@ export async function getServerContext() {
   }
 
   return {
-    headers: headerStore,
-    cookies: cookieStore,
+    getAllHeaders,
+    getAllCookies,
     getHeader,
     getCookie,
     setCookie,
@@ -43,8 +56,10 @@ export async function getServerContext() {
 }
 
 export async function getAuthSession() {
+  const ctx = await getServerContext()
+
   const session = await auth.api.getSession({
-    headers: await headers()
+    headers: ctx.getAllHeaders()
   })
 
   return session

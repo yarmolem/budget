@@ -28,7 +28,9 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${heading.variable} ${body.variable} antialiased`}>
+      <body
+        className={`${heading.variable} ${body.variable} antialiased bg-muted`}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

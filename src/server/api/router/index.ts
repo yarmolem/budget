@@ -1,12 +1,10 @@
-import { z } from 'zod'
-import { createCallerFactory, publicProcedure, createTRPCRouter } from '../trpc'
-import { usersRouter } from './users.router'
+import { categoriesRouter } from './categories.router'
+import { transactionsRouter } from './transactions.router'
+import { createCallerFactory, createTRPCRouter } from '../trpc'
 
 export const appRouter = createTRPCRouter({
-  users: usersRouter,
-  hello: publicProcedure
-    .input(z.object({ name: z.string().optional() }))
-    .query(({ input }) => `Hola ${input.name ?? 'Joe'}`)
+  categories: categoriesRouter,
+  transactions: transactionsRouter
 })
 
 export type AppRouter = typeof appRouter

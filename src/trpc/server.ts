@@ -11,7 +11,7 @@ import { type AppRouter, createCaller } from '@/server/api/router'
 export const getQueryClient = cache(makeQueryClient)
 
 const createContext = async () => {
-  const headerStore = await headers()
+  const headerStore = headers()
 
   const heads = new Headers(headerStore)
   heads.set('x-trpc-source', 'rsc')

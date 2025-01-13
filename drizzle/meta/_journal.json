@@ -15,6 +15,20 @@
       "when": 1731809261607,
       "tag": "0001_grey_khan",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1732555604894,
+      "tag": "0002_high_eternity",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1736443224494,
+      "tag": "0003_flashy_venom",
+      "breakpoints": true
     }
   ]
 }

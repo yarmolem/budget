@@ -1,14 +1,12 @@
-import MillionLint from '@million/lint'
-
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
-
-export default MillionLint.next({
-  rsc: true,
-  enabled: true,
-  filter: {
-    include: '**/components/*.{mtsx,mjsx,tsx,jsx}'
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        hostname: 'assets.aceternity.com'
+      }
+    ]
   }
-})(nextConfig)
+}
 
-/* export default nextConfig */
+export default nextConfig
