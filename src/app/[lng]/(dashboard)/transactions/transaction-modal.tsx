@@ -56,8 +56,8 @@ type Props = {
 const formSchema = z.object({
   date: z.date(),
   amount: z.string().min(1),
-  categoryId: z.string().min(1),
   description: z.string().min(1),
+  categoryId: z.string().min(1).nullable(),
   type: z.nativeEnum(EnumTransaccionType),
   method: z.nativeEnum(EnumTransaccionMethod),
   tagIds: z.array(z.string()).optional(),
@@ -104,7 +104,7 @@ const TransactionsModal = (props: Props) => {
         type: values.type,
         method: values.method,
         amount: Number(values.amount),
-        categoryId: values.categoryId,
+        categoryId: values.categoryId ?? null,
         description: values.description,
         date: values.date.toISOString(),
         tagIds: values.tagIds,
@@ -190,8 +190,8 @@ const TransactionsModal = (props: Props) => {
       form.setValue("type", props.data.type);
       form.setValue("method", props.data.method);
       form.setValue("amount", String(props.data.amount));
-      form.setValue("categoryId", props.data.categoryId);
-      form.setValue("description", props.data.description);
+      form.setValue("description", props.data.description ?? "");
+      form.setValue("categoryId", props.data.categoryId ?? null);
       form.setValue(
         "date",
         props.data.date ? new Date(props.data.date) : new Date(),
@@ -308,7 +308,7 @@ const TransactionsModal = (props: Props) => {
                 <FormControl>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
+                    defaultValue={field.value ?? undefined}
                   >
                     <FormControl>
                       <SelectTrigger>

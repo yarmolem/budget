@@ -84,8 +84,8 @@ export const transactionsRouter = createTRPCRouter({
       z.object({
         date: z.string(),
         amount: z.number(),
-        categoryId: z.string(),
         description: z.string(),
+        categoryId: z.string().nullable(),
         tagIds: z.array(z.string()).optional(),
         type: z.nativeEnum(EnumTransaccionType),
         method: z.nativeEnum(EnumTransaccionMethod),
@@ -126,8 +126,8 @@ export const transactionsRouter = createTRPCRouter({
         id: z.string(),
         date: z.string(),
         amount: z.number(),
-        categoryId: z.string(),
         description: z.string(),
+        categoryId: z.string().nullable(),
         tagIds: z.array(z.string()).optional(),
         type: z.nativeEnum(EnumTransaccionType),
         method: z.nativeEnum(EnumTransaccionMethod),
@@ -220,17 +220,19 @@ export const transactionsRouter = createTRPCRouter({
     const recordCategoryExpenses = data.reduce(
       (acc, transaction) => {
         if (transaction.type === EnumTransaccionType.EXPENSE) {
-          if (!acc?.[transaction.categoryId]) {
+          if (transaction.categoryId && !acc?.[transaction.categoryId]) {
             acc[transaction.categoryId] = {
               amount: 0,
-              title: transaction.category.title,
+              title: transaction.category?.title ?? "",
             };
           }
 
-          acc[transaction.categoryId] = {
-            ...acc[transaction.categoryId]!,
-            amount: acc[transaction.categoryId]!.amount + transaction.amount,
-          };
+          if (transaction.categoryId && acc?.[transaction.categoryId]) {
+            acc[transaction.categoryId] = {
+              ...acc[transaction.categoryId]!,
+              amount: acc[transaction.categoryId]!.amount + transaction.amount,
+            };
+          }
         }
 
         return acc;
