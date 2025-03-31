@@ -1,8 +1,6 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "4bb17934-0cc4-4507-b0b5-b90154faac1b",
-  "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "budget_category": {
       "name": "budget_category",
@@ -55,7 +53,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_user": {
       "name": "budget_user",
@@ -108,13 +107,16 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "_meta": {
-    "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "4bb17934-0cc4-4507-b0b5-b90154faac1b",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "views": {}
 }

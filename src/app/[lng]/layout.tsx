@@ -25,11 +25,12 @@ export const metadata = {
 
 export default async function RootLayout({
   children,
-  params: { lng },
+  params,
 }: {
-  params: { lng: Language };
+  params: Promise<{ lng: Language }>;
   children: React.ReactNode;
 }) {
+  const { lng } = await params;
   const session = await getServerAuthSession();
 
   return (

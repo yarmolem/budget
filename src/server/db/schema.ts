@@ -42,7 +42,9 @@ export const categories = createTable(
     id: text("id").notNull().primaryKey(),
     title: text("title").notNull(),
     color: text("color").notNull(),
-    authorId: text("author_id").notNull(),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     isIncome: int("is_income", { mode: "boolean" }).default(false).notNull(),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`CURRENT_TIMESTAMP`)
@@ -62,8 +64,12 @@ export const transactions = createTable(
     id: text("id").notNull().primaryKey(),
     amount: int("amount").notNull(),
     description: text("description").notNull(),
-    authorId: text("author_id").notNull(),
-    categoryId: text("category_id").notNull(),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    categoryId: text("category_id").references(() => categories.id, {
+      onDelete: "set null",
+    }),
     type: text("type").notNull().$type<EnumTransaccionType>(),
     method: text("method").notNull().$type<EnumTransaccionMethod>(),
     date: int("date", { mode: "timestamp" }).notNull(),
@@ -84,7 +90,9 @@ export const tags = createTable(
   {
     id: text("id").notNull().primaryKey(),
     title: text("title").notNull(),
-    authorId: text("author_id").notNull(),
+    authorId: text("author_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
     createdAt: int("created_at", { mode: "timestamp" })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -102,10 +110,10 @@ export const tagsOnTransactions = createTable(
   {
     tagId: text("tag_id")
       .notNull()
-      .references(() => tags.id),
+      .references(() => tags.id, { onDelete: "cascade" }),
     transactionId: text("transaction_id")
       .notNull()
-      .references(() => transactions.id),
+      .references(() => transactions.id, { onDelete: "cascade" }),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.tagId, t.transactionId] }),

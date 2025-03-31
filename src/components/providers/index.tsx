@@ -7,6 +7,7 @@ import { SessionProvider, type SessionProviderProps } from "next-auth/react";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { type Language, fallbackLng } from "@/i18n/settings";
+import { CookiesProvider } from "react-cookie";
 
 const LanguageContext = createContext({
   lng: fallbackLng,
@@ -25,18 +26,20 @@ export default function Providers({
 }) {
   return (
     <>
-      <LanguageContext.Provider value={{ lng }}>
-        <NextTopLoader showSpinner={false} />
-        <TRPCReactProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            disableTransitionOnChange
-          >
-            <SessionProvider session={session}>{children}</SessionProvider>
-          </ThemeProvider>
-        </TRPCReactProvider>
-      </LanguageContext.Provider>
+      <CookiesProvider>
+        <LanguageContext.Provider value={{ lng }}>
+          <NextTopLoader showSpinner={false} />
+          <TRPCReactProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              disableTransitionOnChange
+            >
+              <SessionProvider session={session}>{children}</SessionProvider>
+            </ThemeProvider>
+          </TRPCReactProvider>
+        </LanguageContext.Provider>
+      </CookiesProvider>
     </>
   );
 }

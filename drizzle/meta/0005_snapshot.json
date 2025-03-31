@@ -1,8 +1,6 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "c41b010b-f59c-4d7d-95d6-7fb7f21f85e7",
-  "prevId": "1f3fb11b-fb48-476d-9c28-b28c081a8fbc",
   "tables": {
     "budget_category": {
       "name": "budget_category",
@@ -63,7 +61,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_expense": {
       "name": "budget_expense",
@@ -137,7 +136,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_income": {
       "name": "budget_income",
@@ -211,7 +211,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_transaction": {
       "name": "budget_transaction",
@@ -285,7 +286,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_user": {
       "name": "budget_user",
@@ -338,13 +340,16 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "_meta": {
-    "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "c41b010b-f59c-4d7d-95d6-7fb7f21f85e7",
+  "prevId": "1f3fb11b-fb48-476d-9c28-b28c081a8fbc",
+  "views": {}
 }

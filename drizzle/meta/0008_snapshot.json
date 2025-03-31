@@ -1,8 +1,6 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "d28f887a-9de5-4c9a-ac11-2e94b77ed4a7",
-  "prevId": "2d6fea2f-3d21-4024-83a8-c3119dc4ba0c",
   "tables": {
     "budget_category": {
       "name": "budget_category",
@@ -71,7 +69,8 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_tag": {
       "name": "budget_tag",
@@ -125,7 +124,8 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_tag_transaction": {
       "name": "budget_tag_transaction",
@@ -150,28 +150,28 @@
         "budget_tag_transaction_tag_id_budget_tag_id_fk": {
           "name": "budget_tag_transaction_tag_id_budget_tag_id_fk",
           "tableFrom": "budget_tag_transaction",
-          "tableTo": "budget_tag",
           "columnsFrom": [
             "tag_id"
           ],
+          "tableTo": "budget_tag",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "budget_tag_transaction_transaction_id_budget_transaction_id_fk": {
           "name": "budget_tag_transaction_transaction_id_budget_transaction_id_fk",
           "tableFrom": "budget_tag_transaction",
-          "tableTo": "budget_transaction",
           "columnsFrom": [
             "transaction_id"
           ],
+          "tableTo": "budget_transaction",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -183,7 +183,8 @@
           "name": "budget_tag_transaction_tag_id_transaction_id_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_transaction": {
       "name": "budget_transaction",
@@ -272,7 +273,8 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "budget_user": {
       "name": "budget_user",
@@ -333,13 +335,16 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "_meta": {
-    "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "d28f887a-9de5-4c9a-ac11-2e94b77ed4a7",
+  "prevId": "2d6fea2f-3d21-4024-83a8-c3119dc4ba0c",
+  "views": {}
 }
