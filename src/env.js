@@ -1,5 +1,8 @@
-import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
+import { createEnv } from "@t3-oss/env-nextjs";
+
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
 
 export const env = createEnv({
   /**
@@ -7,12 +10,6 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z
-      .string()
-      .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL",
-      ),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -45,7 +42,6 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,

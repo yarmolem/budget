@@ -1,15 +1,22 @@
-import { type Config } from "drizzle-kit";
+import { config } from "dotenv";
 
-import { env } from "@/env";
+import { defineConfig } from "drizzle-kit";
 
-export default {
-  dialect: "sqlite",
-  driver: "turso",
+config({ path: ".env.local" });
+
+const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
+const tursoDatabaseUrl = process.env.TURSO_CONNECTION_URL;
+
+if (!tursoAuthToken || !tursoDatabaseUrl) {
+  throw new Error("TURSO_AUTH_TOKEN and TURSO_DATABASE_URL must be set");
+}
+
+export default defineConfig({
   out: "./drizzle",
+  dialect: "turso",
   schema: "./src/server/db/schema.ts",
   dbCredentials: {
-    url: env.TURSO_CONNECTION_URL,
-    authToken: env.TURSO_AUTH_TOKEN,
+    url: tursoDatabaseUrl,
+    authToken: tursoAuthToken,
   },
-  tablesFilter: ["check_*"],
-} satisfies Config;
+});
