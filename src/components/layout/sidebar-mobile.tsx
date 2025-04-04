@@ -12,7 +12,9 @@ import {
   SheetFooter,
   SheetHeader,
   SheetContent,
-  SheetTrigger
+  SheetTrigger,
+  SheetTitle,
+  SheetDescription
 } from '../ui/sheet'
 import { useState } from 'react'
 import LanguageSwitcher from '../shared/language-switcher'
@@ -32,12 +34,19 @@ export function SidebarMobile(props: SidebarProps) {
           <MenuIcon />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="flex flex-col">
-        <SheetHeader>
+      <SheetContent side="left" className="flex flex-col max-w-sm">
+        <SheetHeader className="pt-8">
+          <SheetTitle className="sr-only">Navegation</SheetTitle>
+          <SheetDescription className="sr-only">
+            Sidebar to navigate through the app
+          </SheetDescription>
           <Logo />
         </SheetHeader>
-        <SidebarContent onClose={() => setShow(false)} />
-        <SheetFooter className="mt-auto gap-y-3">
+        <div className="flex-1 px-4">
+          <SidebarContent onClose={() => setShow(false)} />
+        </div>
+        <SheetFooter className="pt-0">
+          <LanguageSwitcher />
           <Button
             className="w-full"
             variant="destructive"
@@ -45,8 +54,6 @@ export function SidebarMobile(props: SidebarProps) {
           >
             {t('logout')}
           </Button>
-
-          <LanguageSwitcher />
         </SheetFooter>
       </SheetContent>
     </Sheet>

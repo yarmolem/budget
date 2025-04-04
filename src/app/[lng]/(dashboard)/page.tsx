@@ -1,31 +1,31 @@
-"use client";
+'use client'
 
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState } from 'react'
 
-import { DashboardKpis } from "@/components/shared/dashboard-kpis";
-import { DateRangePicker } from "@/components/shared/date-range-picker";
-import { DashboardCategories } from "@/components/shared/dashboard-categories";
-import { DashboardTransactionHistory } from "@/components/shared/dashboard-transaction-history";
+import { DashboardKpis } from '@/components/shared/dashboard-kpis'
+import { DateRangePicker } from '@/components/shared/date-range-picker'
+import { DashboardCategories } from '@/components/shared/dashboard-categories'
+import { DashboardTransactionHistory } from '@/components/shared/dashboard-transaction-history'
 
-import { api } from "@/trpc/react";
+import { api } from '@/trpc/react'
 
-import type { DateRange } from "react-day-picker";
+import type { DateRange } from 'react-day-picker'
 
 const DashboardHome = () => {
-  const [date, setDate] = useState<DateRange | undefined>(undefined);
+  const [date, setDate] = useState<DateRange | undefined>(undefined)
 
   const { data, isLoading } = api.transactions.getAll.useQuery({
     filters: {
       date: useMemo(() => {
         if (date?.from) {
-          if (date?.to) return { gte: date.from, lte: date.to };
-          return { eq: date.from };
+          if (date?.to) return { gte: date.from, lte: date.to }
+          return { eq: date.from }
         }
 
-        return undefined;
-      }, [date]),
-    },
-  });
+        return undefined
+      }, [date])
+    }
+  })
 
   return (
     <>
@@ -55,7 +55,7 @@ const DashboardHome = () => {
         />
       </div>
     </>
-  );
-};
+  )
+}
 
-export default DashboardHome;
+export default DashboardHome

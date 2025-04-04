@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import { Fragment, useMemo } from "react";
-import { Pie, Cell, Legend, PieChart, ResponsiveContainer } from "recharts";
+import { Fragment, useMemo } from 'react'
+import { Pie, Cell, Legend, PieChart, ResponsiveContainer } from 'recharts'
 
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'
 
-import { cn } from "@/lib/utils";
-import { useTranslation } from "@/hooks/use-translation";
-import type { ITransaction } from "@/server/db/schema";
+import { cn } from '@/lib/utils'
+import { useTranslation } from '@/hooks/use-translation'
+import type { ITransaction } from '@/server/db/schema'
 
 interface DashboardCategoriesProps {
-  className?: string;
-  data?: ITransaction[];
+  className?: string
+  data?: ITransaction[]
 }
 
 /* const data = [
@@ -61,36 +61,36 @@ interface DashboardCategoriesProps {
 }; */
 
 export function DashboardCategories(props: DashboardCategoriesProps) {
-  const { t } = useTranslation("dashboard-page");
+  const { t } = useTranslation('dashboard-page')
 
   const data = useMemo(() => {
-    if (!props?.data) return [];
-    const categories = new Map<string, { color: string; amount: number }>();
+    if (!props?.data) return []
+    const categories = new Map<string, { color: string; amount: number }>()
 
     props.data.forEach((transaction) => {
-      if (!transaction?.category) return;
+      if (!transaction?.category) return
 
-      const key = transaction.category?.title;
+      const key = transaction.category?.title
       categories.set(key, {
         color: transaction.category?.color,
-        amount: (categories.get(key)?.amount ?? 0) + (transaction?.amount ?? 0),
-      });
-    });
+        amount: (categories.get(key)?.amount ?? 0) + (transaction?.amount ?? 0)
+      })
+    })
 
     return Array.from(categories.entries())
       .map(([key, { amount, color }]) => ({
         name: key,
         value: amount,
-        color,
+        color
       }))
-      .slice(0, 10);
-  }, [props?.data]);
+      .slice(0, 10)
+  }, [props?.data])
 
   return (
     <Fragment>
       <Card className={cn(props.className)}>
-        <CardHeader>
-          <CardTitle>{t("categories")}</CardTitle>
+        <CardHeader className="text-muted-foreground">
+          <CardTitle>{t('categories')}</CardTitle>
         </CardHeader>
         <CardContent className="pl-2">
           <ResponsiveContainer width="100%" height={350}>
@@ -115,5 +115,5 @@ export function DashboardCategories(props: DashboardCategoriesProps) {
         </CardContent>
       </Card>
     </Fragment>
-  );
+  )
 }

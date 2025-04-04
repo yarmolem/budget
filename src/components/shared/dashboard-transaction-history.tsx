@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import React, { useMemo } from "react";
+import React, { useMemo } from 'react'
 import {
   Area,
   YAxis,
@@ -8,72 +8,74 @@ import {
   Tooltip,
   AreaChart,
   CartesianGrid,
-  ResponsiveContainer,
-} from "recharts";
+  ResponsiveContainer
+} from 'recharts'
 
-import { ReChartsTooltip } from "./recharts-tooltip";
-import { Card, CardTitle, CardHeader, CardContent } from "../ui/card";
+import { ReChartsTooltip } from './recharts-tooltip'
+import { Card, CardTitle, CardHeader, CardContent } from '../ui/card'
 
-import { cn } from "@/lib/utils";
-import { useTranslation } from "@/hooks/use-translation";
+import { cn } from '@/lib/utils'
+import { useTranslation } from '@/hooks/use-translation'
 
-import type { ITransaction } from "@/server/db/schema";
-import dayjs from "dayjs";
-import { EnumTransaccionType } from "@/interface";
+import type { ITransaction } from '@/server/db/schema'
+import dayjs from 'dayjs'
+import { EnumTransaccionType } from '@/interface'
 
 type HistoryData = {
-  label: string;
-  income: number;
-  expense: number;
-};
+  label: string
+  income: number
+  expense: number
+}
 
 type Props = {
-  className?: string;
-  data: ITransaction[];
-};
+  className?: string
+  data: ITransaction[]
+}
 
 const DashboardTransactionHistory = (props: Props) => {
-  const { t } = useTranslation("dashboard-page");
+  const { t } = useTranslation('dashboard-page')
 
   const data = useMemo(() => {
-    if (!props?.data) return [];
+    if (!props?.data) return []
 
-    const record: Record<string, HistoryData> = {};
+    const record: Record<string, HistoryData> = {}
 
     for (const item of props?.data ?? []) {
-      const key = dayjs(item.date).format("DD/MM/YYYY");
+      const key = dayjs(item.date).format('DD/MM/YYYY')
 
       if (!record[key]) {
         record[key] = {
           label: key,
           income: 0,
-          expense: 0,
-        };
+          expense: 0
+        }
       }
 
       if (item.type === EnumTransaccionType.INCOME) {
         record[key] = {
           ...record[key],
-          income: (record?.[key]?.income ?? 0) + item.amount,
-        };
+          income: (record?.[key]?.income ?? 0) + item.amount
+        }
       } else {
         record[key] = {
           ...record[key],
-          expense: (record?.[key]?.expense ?? 0) + item.amount,
-        };
+          expense: (record?.[key]?.expense ?? 0) + item.amount
+        }
       }
     }
 
-    return Object.values(record);
-  }, [props?.data]);
+    return Object.values(record)
+  }, [props?.data])
 
   return (
     <Card className={cn(props.className)}>
       <CardHeader>
-        <CardTitle>{t("expense_history")}</CardTitle>
+        <CardTitle className="text-muted-foreground">
+          {t('expense_history')}
+        </CardTitle>
       </CardHeader>
-      <CardContent className="h-[27.3rem] w-full">
-        <ResponsiveContainer width="100%" height={400}>
+      <CardContent className="h-[27.3rem] w-full pl-2">
+        <ResponsiveContainer width="100%">
           <AreaChart
             data={data ?? []}
             margin={{ left: 12, right: 0, bottom: 12 }}
@@ -125,7 +127,7 @@ const DashboardTransactionHistory = (props: Props) => {
         </ResponsiveContainer>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export { DashboardTransactionHistory };
+export { DashboardTransactionHistory }

@@ -1,81 +1,81 @@
-import React, { useMemo, useState } from "react";
-import { XIcon } from "lucide-react";
+import React, { useMemo, useState } from 'react'
+import { XIcon } from 'lucide-react'
 import {
   Select,
   SelectItem,
   SelectValue,
   SelectContent,
-  SelectTrigger,
-} from "./select";
-import { Badge } from "./badge";
+  SelectTrigger
+} from './select'
+import { Badge } from './badge'
 
-type Option = { label: string; value: string };
+type Option = { label: string; value: string }
 
 type Props = {
-  data: Option[];
-  defaultValue: string[];
-  placeholder?: string;
-  onValueChange: (value: string[]) => void;
-};
+  data: Option[]
+  defaultValue: string[]
+  placeholder?: string
+  onValueChange: (value: string[]) => void
+}
 
 const SelectMultiple = ({
   data,
   defaultValue = [],
   placeholder,
-  onValueChange,
+  onValueChange
 }: Props) => {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('')
   const [options, setOptions] = useState<(Option & { selected?: boolean })[]>(
     () => {
       return data.map((v) => ({
         ...v,
-        selected: defaultValue.includes(v.value),
-      }));
-    },
-  );
+        selected: defaultValue.includes(v.value)
+      }))
+    }
+  )
 
   const handleAdd = (value: string) => {
-    const item = data.find((v) => v.value === value)!;
-    if (!item) return;
+    const item = data.find((v) => v.value === value)!
+    if (!item) return
 
     const newOptions = options.map((v) =>
-      v.value === value ? { ...v, selected: true } : v,
-    );
+      v.value === value ? { ...v, selected: true } : v
+    )
 
-    setValue("");
-    setOptions(newOptions);
-    onValueChange(newOptions.filter((v) => v.selected).map((v) => v.value));
-  };
+    setValue('')
+    setOptions(newOptions)
+    onValueChange(newOptions.filter((v) => v.selected).map((v) => v.value))
+  }
 
   const handleDelete = (value: string) => {
-    const item = data.find((v) => v.value === value)!;
-    if (!item) return;
+    const item = data.find((v) => v.value === value)!
+    if (!item) return
 
     const newOptions = options.map((v) =>
-      v.value === value ? { ...v, selected: false } : v,
-    );
+      v.value === value ? { ...v, selected: false } : v
+    )
 
-    setValue("");
-    setOptions(newOptions);
-    onValueChange(newOptions.filter((v) => v.selected).map((v) => v.value));
-  };
+    setValue('')
+    setOptions(newOptions)
+    onValueChange(newOptions.filter((v) => v.selected).map((v) => v.value))
+  }
 
   const { selected, notSelected } = useMemo(() => {
-    const selected = options.filter((v) => v.selected);
-    const notSelected = options.filter((v) => !v.selected);
-    return { selected, notSelected };
-  }, [options]);
+    const selected = options.filter((v) => v.selected)
+    const notSelected = options.filter((v) => !v.selected)
+    return { selected, notSelected }
+  }, [options])
 
   return (
     <>
       <Select
         value={value}
         onValueChange={(value: string) => {
-          setValue(value);
-          handleAdd(value);
+          setValue(value)
+          handleAdd(value)
         }}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w-full">
           <SelectValue placeholder={placeholder}>
             {selected.length} items selected
           </SelectValue>
@@ -87,7 +87,7 @@ const SelectMultiple = ({
               key={value}
               value={value}
               onClick={(e) => {
-                e.preventDefault();
+                e.preventDefault()
               }}
             >
               {label}
@@ -109,7 +109,7 @@ const SelectMultiple = ({
         ))}
       </div>
     </>
-  );
-};
+  )
+}
 
-export { SelectMultiple };
+export { SelectMultiple }
