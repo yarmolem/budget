@@ -1,32 +1,32 @@
-"use client";
+'use client'
 
-import React from "react";
+import React from 'react'
 import {
   Select,
   SelectItem,
   SelectValue,
   SelectContent,
-  SelectTrigger,
-} from "../ui/select";
-import { useLanguageCtx } from "../providers";
-import { useRouter, usePathname } from "next/navigation";
+  SelectTrigger
+} from '../ui/select'
+import { useLanguageCtx } from '../providers'
+import { useRouter, usePathname } from 'next/navigation'
 
 const LanguageSwitcher = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { lng } = useLanguageCtx();
+  const router = useRouter()
+  const pathname = usePathname()
+  const { lng } = useLanguageCtx()
 
   return (
     <>
       <Select
-        defaultValue={lng ?? "en"}
+        defaultValue={lng ?? 'en'}
         onValueChange={(value) => {
-          const path = pathname.split("/");
-          path[1] = value;
-          router.push(`${path.join("/")}`);
+          const path = pathname.split('/')
+          path[1] = value
+          router.push(`${path.join('/')}`)
         }}
       >
-        <SelectTrigger>
+        <SelectTrigger className="w-full">
           <SelectValue placeholder="English" />
         </SelectTrigger>
         <SelectContent>
@@ -35,7 +35,7 @@ const LanguageSwitcher = () => {
         </SelectContent>
       </Select>
     </>
-  );
-};
+  )
+}
 
-export default LanguageSwitcher;
+export default LanguageSwitcher

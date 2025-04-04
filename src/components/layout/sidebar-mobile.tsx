@@ -1,33 +1,33 @@
-"use client";
+'use client'
 
-import { MenuIcon } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { MenuIcon } from 'lucide-react'
+import { signOut } from 'next-auth/react'
 
-import { Logo } from "../shared/logo";
-import { Button } from "../ui/button";
-import { useTranslation } from "@/hooks/use-translation";
-import { SidebarContent } from "../shared/sidebar-content";
+import { Logo } from '../shared/logo'
+import { Button } from '../ui/button'
+import { useTranslation } from '@/hooks/use-translation'
+import { SidebarContent } from '../shared/sidebar-content'
 import {
   Sheet,
   SheetFooter,
   SheetHeader,
   SheetContent,
-  SheetTrigger,
-} from "../ui/sheet";
-import { useState } from "react";
-import LanguageSwitcher from "../shared/language-switcher";
+  SheetTrigger
+} from '../ui/sheet'
+import { useState } from 'react'
+import LanguageSwitcher from '../shared/language-switcher'
 
 interface SidebarProps {
-  className?: string;
+  className?: string
 }
 
-export function SidebarMobile(_props: SidebarProps) {
-  const { t } = useTranslation("sidebar");
-  const [show, setShow] = useState(false);
+export function SidebarMobile(props: SidebarProps) {
+  const { t } = useTranslation('sidebar')
+  const [show, setShow] = useState(false)
 
   return (
     <Sheet open={show} onOpenChange={setShow}>
-      <SheetTrigger asChild>
+      <SheetTrigger asChild className={props.className}>
         <Button size="icon" variant="outline" className="flex md:hidden">
           <MenuIcon />
         </Button>
@@ -43,12 +43,12 @@ export function SidebarMobile(_props: SidebarProps) {
             variant="destructive"
             onClick={() => void signOut()}
           >
-            {t("logout")}
+            {t('logout')}
           </Button>
 
           <LanguageSwitcher />
         </SheetFooter>
       </SheetContent>
     </Sheet>
-  );
+  )
 }

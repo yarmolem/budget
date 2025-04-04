@@ -2,10 +2,9 @@ import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLSelectElement> {}
+export type BasicSelectProps = React.InputHTMLAttributes<HTMLSelectElement>
 
-const BasicSelect = React.forwardRef<HTMLSelectElement, InputProps>(
+const BasicSelect = React.forwardRef<HTMLSelectElement, BasicSelectProps>(
   ({ className, ...props }, ref) => {
     return (
       <select

@@ -1,30 +1,27 @@
-import React, { type ElementRef, type ComponentPropsWithRef } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import React, { type ComponentPropsWithRef } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
 
-import { Input } from "./input";
+import { Input } from './input'
 
-const InputSecure = React.forwardRef<
-  ElementRef<typeof Input>,
-  ComponentPropsWithRef<typeof Input>
->(({ type: _type, ...props }, ref) => {
-  const [show, setShow] = React.useState(false);
+type InputSecureProps = Omit<ComponentPropsWithRef<typeof Input>, 'type'>
+
+const InputSecure = (props: InputSecureProps) => {
+  const [show, setShow] = React.useState(false)
 
   return (
     <Input
-      ref={ref}
-      type={show ? "text" : "password"}
+      type={show ? 'text' : 'password'}
       rightIcon={
         <button type="button" onClick={() => setShow((x) => !x)}>
           {show ? <EyeOff /> : <Eye />}
           <span className="sr-only">
-            {show ? "Hide password" : "Show password"}
+            {show ? 'Hide password' : 'Show password'}
           </span>
         </button>
       }
       {...props}
     />
-  );
-});
-InputSecure.displayName = "InputSecure";
+  )
+}
 
-export { InputSecure };
+export { InputSecure }
