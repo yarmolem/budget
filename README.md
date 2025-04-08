@@ -67,7 +67,7 @@ A modern, full-stack budget tracking application built with Next.js, tRPC, and D
 1. Clone the repository
 
 ```bash
-git clone [your-repo-url]
+git clone git@github.com:yarmolem/budget.git
 cd budget-app
 ```
 
