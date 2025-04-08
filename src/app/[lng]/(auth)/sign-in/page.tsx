@@ -1,11 +1,11 @@
-"use client";
+'use client'
 
-import z from "zod";
+import z from 'zod'
 
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Link from 'next/link'
+import { signIn } from 'next-auth/react'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 
 import {
   Form,
@@ -13,68 +13,66 @@ import {
   FormField,
   FormLabel,
   FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+  FormMessage
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { InputSecure } from "@/components/ui/input-secure";
-import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
-import { useState } from "react";
+  CardTitle
+} from '@/components/ui/card'
+import { InputSecure } from '@/components/ui/input-secure'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { useState } from 'react'
 
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(1),
-});
+  password: z.string().min(1)
+})
 
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof formSchema>
 
 const SignInPage = () => {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+      email: '',
+      password: ''
+    }
+  })
 
   async function onSubmit(values: FormValues) {
-    setLoading(true);
+    setLoading(true)
 
     try {
-      const res = await signIn("credentials", {
+      const res = await signIn('credentials', {
         email: values.email,
         password: values.password,
-        redirect: false,
-      });
-
-      console.log({ res });
+        redirect: false
+      })
 
       if (!res?.ok && res?.error) {
-        throw new Error(res.error);
+        throw new Error(res.error)
       }
 
-      router.replace("/");
+      router.replace('/')
     } catch (error) {
-      console.log("[ERROR_LOGIN], ", error);
+      console.log('[ERROR_LOGIN], ', error)
 
       if (error instanceof Error) {
-        toast.error(error.message);
-        return;
+        toast.error(error.message)
+        return
       }
 
-      toast.error("Something went wrong");
+      toast.error('Something went wrong')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -91,7 +89,7 @@ const SignInPage = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="space-y-2">
+            <div className="space-y-4">
               <FormField
                 control={form.control}
                 name="email"
@@ -130,7 +128,7 @@ const SignInPage = () => {
             </Button>
 
             <p className="mt-6 text-center text-sm text-muted-foreground">
-              Don&apos;t have an account?{" "}
+              Don&apos;t have an account?{' '}
               <Link
                 href="/sign-up"
                 className="text-primary underline underline-offset-4"
@@ -142,7 +140,7 @@ const SignInPage = () => {
         </Form>
       </CardContent>
     </Card>
-  );
-};
+  )
+}
 
-export default SignInPage;
+export default SignInPage

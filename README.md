@@ -1,29 +1,147 @@
-# Create T3 App
+# Budget App
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+A modern, full-stack budget tracking application built with Next.js, tRPC, and Drizzle ORM. This application helps users manage their finances by tracking income and expenses, categorizing transactions, and providing insightful analytics.
 
-## What's next? How do I make an app with this?
+## Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+- 📊 **Dashboard Overview**
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+  - Real-time financial KPIs
+  - Transaction history visualization
+  - Category-wise spending analysis
+  - Date range filtering for transactions
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+- 💰 **Transaction Management**
 
-## Learn More
+  - Add, edit, and delete transactions
+  - Categorize transactions (income/expense)
+  - Add tags for better organization
+  - Support for multiple payment methods
+  - Transaction history with pagination
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- 📑 **Category Management**
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+  - Create and manage custom categories
+  - Color coding for visual organization
+  - Income/expense categorization
+  - Bulk category operations
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- 🌐 **Internationalization**
 
-## How do I deploy this?
+  - Multi-language support
+  - Automatic language detection
+  - Easy translation management
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- 🎨 **Modern UI/UX**
+  - Responsive design
+  - Dark/Light mode support
+  - Intuitive navigation
+  - Real-time feedback with toast notifications
+
+## Tech Stack
+
+- **Frontend**
+
+  - Next.js 15
+  - React 19
+  - TypeScript
+  - Tailwind CSS
+  - Radix UI Components
+  - React Hook Form
+  - Zod for validation
+
+- **Backend**
+
+  - tRPC for type-safe API
+  - Drizzle ORM
+  - Turso (SQLite) database
+  - NextAuth.js for authentication
+
+- **Development Tools**
+  - ESLint
+  - TypeScript
+  - Drizzle Kit for database migrations
+
+## Getting Started
+
+1. Clone the repository
+
+```bash
+git clone [your-repo-url]
+cd budget-app
+```
+
+2. Install dependencies
+
+```bash
+npm install
+```
+
+3. Set up environment variables
+   Create a `.env` file in the root directory with the following variables:
+
+```env
+NEXTAUTH_SECRET="your-secret-key"
+NEXTAUTH_URL="http://localhost:3000"
+TURSO_CONNECTION_URL="your-turso-connection-url"
+TURSO_AUTH_TOKEN="your-turso-auth-token"
+```
+
+4. Run database migrations
+
+```bash
+npm run db:generate
+npm run db:migrate
+```
+
+5. Start the development server
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:3000`
+
+## Database Management
+
+- Generate migrations: `npm run db:generate`
+- Apply migrations: `npm run db:migrate`
+- Open database studio: `npm run db:studio`
+
+## Future Improvements
+
+Here are some potential improvements and optimizations that could be implemented:
+
+- **Performance Optimizations**
+
+  - [] Implement server-side caching for frequently accessed data
+  - [] Add database query optimization and indexing
+  - [] Implement lazy loading for transaction history
+  - [] Add pagination for large datasets
+
+- **Feature Enhancements**
+
+  - [] Add budget planning and forecasting
+  - [] Implement recurring transactions
+  - [] Add export/import functionality for transactions
+  - [] Create financial reports and analytics
+  - [] Add support for multiple currencies
+  - [] Implement data backup and restore functionality
+
+- **User Experience**
+
+  - [] Add keyboard shortcuts for common actions
+  - [] Implement drag-and-drop for transaction categorization
+  - [] Add bulk transaction operations
+  - [] Create a mobile app version
+  - [] Add more visualization options for financial data
+
+- **Security**
+  - [] Implement two-factor authentication
+  - [] Add audit logs for sensitive operations
+  - [] Enhance data encryption
+  - [] Add role-based access control
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

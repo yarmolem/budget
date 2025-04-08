@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { Fragment } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -21,31 +21,37 @@ const SidebarContent = (props: Props) => {
   return (
     <nav className={cn('flex-1 grid items-start gap-2', props.className)}>
       <ScrollArea className="flex-1 h-[calc(100dvh-230px)]">
-        {items.map((item, index) => {
-          const Icon = item.icon ?? (() => <div />)
-          return (
-            item.href && (
-              <Link
-                key={index}
-                onClick={props.onClose}
-                href={item.disabled ? '/' : item.href}
-              >
-                <span
-                  className={cn(
-                    'group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
-                    path === `/${lng}${item.href === '/' ? '' : item.href}`
-                      ? 'bg-secondary'
-                      : 'transparent',
-                    item.disabled && 'cursor-not-allowed opacity-80'
+        <ul className="space-y-2">
+          {items.map((item, index) => {
+            const Icon = item.icon ?? (() => <div />)
+            return (
+              <Fragment key={index}>
+                <li>
+                  {item.href && (
+                    <Link
+                      onClick={props.onClose}
+                      href={item.disabled ? '/' : item.href}
+                    >
+                      <span
+                        className={cn(
+                          'group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground',
+                          path ===
+                            `/${lng}${item.href === '/' ? '' : item.href}`
+                            ? 'bg-secondary'
+                            : 'transparent',
+                          item.disabled && 'cursor-not-allowed opacity-80'
+                        )}
+                      >
+                        <Icon className="mr-2 h-4 w-4" />
+                        <span>{t(item.title)}</span>
+                      </span>
+                    </Link>
                   )}
-                >
-                  <Icon className="mr-2 h-4 w-4" />
-                  <span>{t(item.title)}</span>
-                </span>
-              </Link>
+                </li>
+              </Fragment>
             )
-          )
-        })}
+          })}
+        </ul>
       </ScrollArea>
     </nav>
   )

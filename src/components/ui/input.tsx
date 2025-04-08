@@ -10,11 +10,7 @@ type InputProps = React.ComponentProps<'input'> & {
 function Input({ className, type, rightIcon, leftIcon, ...props }: InputProps) {
   return (
     <div className="relative">
-      {leftIcon && (
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          {leftIcon}
-        </div>
-      )}
+      {leftIcon && <div className="absolute left-3 top-[6px]">{leftIcon}</div>}
 
       <input
         type={type}
@@ -31,9 +27,7 @@ function Input({ className, type, rightIcon, leftIcon, ...props }: InputProps) {
       />
 
       {rightIcon && (
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          {rightIcon}
-        </div>
+        <div className="absolute right-3 top-[6px]">{rightIcon}</div>
       )}
     </div>
   )
